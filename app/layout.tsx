@@ -2,9 +2,9 @@ import type { Metadata } from 'next'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
+   title: 'Aenfinite Portfolio',
+  description: 'Explore Aenfinite’s creative portfolio — showcasing innovative web design, app development, AI solutions, branding, and digital marketing projects crafted for businesses worldwide.',
+  generator: 'Aenfinite | Digital Innovation Agency',
 }
 
 export default function RootLayout({
