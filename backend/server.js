@@ -12,6 +12,9 @@ app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
+// Serve uploaded images statically
+app.use('/uploads', express.static('uploads'))
+
 // Initialize predefined categories
 async function initializePredefinedCategories() {
   try {

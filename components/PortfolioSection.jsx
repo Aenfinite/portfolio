@@ -7,16 +7,16 @@ import Masonry from "../Masonry/Masonry"
 const portfolioCategories = [
   {
     id: "web-design-development",
-    img: "https://images.unsplash.com/photo-1467232004584-a241de8bcf5d?auto=format&fit=crop&w=400&h=300&q=80",
+    img: "https://cdn.dribbble.com/userupload/15958522/file/still-3c7f8e5c889f41e007a4fbd4d49ab1e8.png?resize=400x0",
     url: "/category/web-design-development",
-    height: 320,
+    height: 400,
     title: "Web Design & Development",
     description: "Custom websites and web applications built with modern technologies",
     projectCount: 45,
   },
   {
     id: "mobile-app",
-    img: "https://images.unsplash.com/photo-1512941937669-90a1b58e7e9c?auto=format&fit=crop&w=400&h=350&q=80",
+    img: "https://cdn.dribbble.com/userupload/44908990/file/acc40ff4b5381df45d1b923313735583.jpg?format=webp&resize=400x300&vertical=center",
     url: "/category/mobile-app",
     height: 350,
     title: "Mobile App",
@@ -25,7 +25,7 @@ const portfolioCategories = [
   },
   {
     id: "graphic-design",
-    img: "https://images.unsplash.com/photo-1626785774573-4b799315345d?auto=format&fit=crop&w=400&h=280&q=80",
+    img: "https://dl-file.cyberlink.com/web/upload-file/learning-center/enu/2025/6/Thumbnail_20250604203841680.jpg",
     url: "/category/graphic-design",
     height: 280,
     title: "Graphic Design",
@@ -34,7 +34,7 @@ const portfolioCategories = [
   },
   {
     id: "logo-design",
-    img: "https://images.unsplash.com/photo-1572044162444-ad60f128bdea?auto=format&fit=crop&w=400&h=340&q=80",
+    img: "https://lutd.io/wp-content/uploads/2017/05/5-types-of-logo-design-thumbnail.jpg",
     url: "/category/logo-design",
     height: 340,
     title: "Logo Design",
@@ -43,7 +43,7 @@ const portfolioCategories = [
   },
   {
     id: "branding",
-    img: "https://images.unsplash.com/photo-1558655146-d09347e92766?auto=format&fit=crop&w=400&h=300&q=80",
+    img: "https://cdn.dribbble.com/userupload/18071618/file/still-01416a205440414bea118c1332e0a7c2.png?format=webp&resize=400x300&vertical=center",
     url: "/category/branding",
     height: 300,
     title: "Branding",
@@ -52,7 +52,7 @@ const portfolioCategories = [
   },
   {
     id: "packaging-design",
-    img: "https://images.unsplash.com/photo-1612198188060-c7c2a3b66eae?auto=format&fit=crop&w=400&h=360&q=80",
+    img: "https://packmojo.com/blog/images/2021/04/weekly-favorites-packaging-tube-designs-thumbnail.jpg",
     url: "/category/packaging-design",
     height: 360,
     title: "Packaging Design",
@@ -61,7 +61,7 @@ const portfolioCategories = [
   },
   {
     id: "ui-ux",
-    img: "https://images.unsplash.com/photo-1561070791-2526d30994b5?auto=format&fit=crop&w=400&h=310&q=80",
+    img: "https://s3-alpha.figma.com/hub/file/2813384734/e49e6fe3-24cb-4e36-95ba-d25da14e0d24-cover.png",
     url: "/category/ui-ux",
     height: 310,
     title: "UI/UX",

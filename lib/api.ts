@@ -1,5 +1,5 @@
 // API client for backend communication
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "https://api.aenfinite.com"
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000"
 const API_URL = `${API_BASE_URL}/api`
 
 // Helper function to get auth token
@@ -149,4 +149,65 @@ export const categoriesAPI = {
     }
     return response.json()
   },
+}
+
+// Images API
+export const imageAPI = {
+  uploadSingle: async (category: string, imageFile: File) => {
+    const token = localStorage.getItem("adminToken")
+    if (!token) throw new Error("No authentication token")
+
+    const formData = new FormData()
+    formData.append('image', imageFile)
+    
+    const response = await fetch(`${API_URL}/admin/upload/${category}`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error || "Failed to upload image")
+    }
+    return response.json()
+  },
+
+  uploadMultiple: async (category: string, imageFiles: File[]) => {
+    const token = localStorage.getItem("adminToken")
+    if (!token) throw new Error("No authentication token")
+
+    const formData = new FormData()
+    imageFiles.forEach(file => formData.append('images', file))
+    
+    const response = await fetch(`${API_URL}/admin/upload/${category}/multiple`, {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      body: formData,
+    })
+
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.error || "Failed to upload images")
+    }
+    return response.json()
+  },
+
+  getByCategory: async (category: string) => {
+    return fetchWithAuth(`/admin/images/${category}`)
+  },
+
+  getAll: async () => {
+    return fetchWithAuth('/admin/images')
+  },
+
+  delete: async (category: string, filename: string) => {
+    return fetchWithAuth(`/admin/images/${category}/${filename}`, {
+      method: 'DELETE'
+    })
+  }
 }

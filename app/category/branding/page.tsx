@@ -103,7 +103,7 @@ export default function BrandingPage() {
                       <Github className="h-5 w-5" />
                     </Link>
                     <Link
-                      href="https://linkedin.com"
+                      href="https://linkedin.com/aenfinite"
                       target="_blank"
                       rel="noopener noreferrer"
                       className="flex h-10 w-10 items-center justify-center rounded-full border border-neutral-200 bg-white text-neutral-600 transition-colors hover:bg-neutral-900 hover:text-white hover:border-neutral-900"

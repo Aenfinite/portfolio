@@ -1,11 +1,14 @@
 const express = require("express")
 const router = express.Router()
 const jwt = require("jsonwebtoken")
+const path = require("path")
+const fs = require("fs")
 const Admin = require("../models/Admin")
 const Project = require("../models/Project")
 const Category = require("../models/Category")
 const authMiddleware = require("../middleware/auth")
 const { PREDEFINED_CATEGORIES } = require("../constants/categories")
+const { upload } = require("../middleware/upload")
 
 // Admin login
 router.post("/login", async (req, res) => {
@@ -206,6 +209,180 @@ router.post("/categories/sync", async (req, res) => {
     })
   } catch (error) {
     res.status(500).json({ error: "Failed to sync categories", message: error.message })
+  }
+})
+
+// Image upload routes
+
+// Upload single image to specific category
+router.post("/upload/:category", upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: "No image file provided" })
+    }
+
+    // Validate category
+    const validCategories = PREDEFINED_CATEGORIES.map(cat => cat.slug)
+    if (!validCategories.includes(req.params.category)) {
+      return res.status(400).json({ error: "Invalid category" })
+    }
+
+    const imageUrl = `/uploads/${req.params.category}/${req.file.filename}`
+    
+    res.json({
+      message: "Image uploaded successfully",
+      imageUrl: imageUrl,
+      filename: req.file.filename,
+      category: req.params.category,
+      size: req.file.size
+    })
+  } catch (error) {
+    res.status(500).json({ error: "Failed to upload image", message: error.message })
+  }
+})
+
+// Upload multiple images to specific category
+router.post("/upload/:category/multiple", upload.array('images', 10), async (req, res) => {
+  try {
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ error: "No image files provided" })
+    }
+
+    // Validate category
+    const validCategories = PREDEFINED_CATEGORIES.map(cat => cat.slug)
+    if (!validCategories.includes(req.params.category)) {
+      return res.status(400).json({ error: "Invalid category" })
+    }
+
+    const uploadedImages = req.files.map(file => ({
+      imageUrl: `/uploads/${req.params.category}/${file.filename}`,
+      filename: file.filename,
+      size: file.size
+    }))
+
+    res.json({
+      message: `${uploadedImages.length} images uploaded successfully`,
+      images: uploadedImages,
+      category: req.params.category
+    })
+  } catch (error) {
+    res.status(500).json({ error: "Failed to upload images", message: error.message })
+  }
+})
+
+// Get all images from specific category
+router.get("/images/:category", async (req, res) => {
+  try {
+    const category = req.params.category
+    
+    // Validate category
+    const validCategories = PREDEFINED_CATEGORIES.map(cat => cat.slug)
+    if (!validCategories.includes(category)) {
+      return res.status(400).json({ error: "Invalid category" })
+    }
+
+    const uploadsDir = path.join(__dirname, '../uploads', category)
+    
+    if (!fs.existsSync(uploadsDir)) {
+      return res.json({ images: [] })
+    }
+
+    const files = fs.readdirSync(uploadsDir)
+    const imageFiles = files.filter(file => {
+      const ext = path.extname(file).toLowerCase()
+      return ['.jpg', '.jpeg', '.png', '.gif', '.webp'].includes(ext)
+    })
+
+    const images = imageFiles.map(filename => {
+      const filePath = path.join(uploadsDir, filename)
+      const stats = fs.statSync(filePath)
+      
+      return {
+        filename,
+        imageUrl: `/uploads/${category}/${filename}`,
+        size: stats.size,
+        createdAt: stats.birthtime
+      }
+    }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+
+    res.json({ 
+      category,
+      count: images.length,
+      images 
+    })
+  } catch (error) {
+    res.status(500).json({ error: "Failed to get images", message: error.message })
+  }
+})
+
+// Get all images from all categories
+router.get("/images", async (req, res) => {
+  try {
+    const allImages = {}
+    
+    for (const category of PREDEFINED_CATEGORIES) {
+      const uploadsDir = path.join(__dirname, '../uploads', category.slug)
+      
+      if (fs.existsSync(uploadsDir)) {
+        const files = fs.readdirSync(uploadsDir)
+        const imageFiles = files.filter(file => {
+          const ext = path.extname(file).toLowerCase()
+          return ['.jpg', '.jpeg', '.png', '.gif', '.webp'].includes(ext)
+        })
+
+        allImages[category.slug] = imageFiles.map(filename => {
+          const filePath = path.join(uploadsDir, filename)
+          const stats = fs.statSync(filePath)
+          
+          return {
+            filename,
+            imageUrl: `/uploads/${category.slug}/${filename}`,
+            size: stats.size,
+            createdAt: stats.birthtime
+          }
+        }).sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+      } else {
+        allImages[category.slug] = []
+      }
+    }
+
+    const totalImages = Object.values(allImages).reduce((total, categoryImages) => total + categoryImages.length, 0)
+    
+    res.json({
+      totalImages,
+      categories: allImages
+    })
+  } catch (error) {
+    res.status(500).json({ error: "Failed to get images", message: error.message })
+  }
+})
+
+// Delete image
+router.delete("/images/:category/:filename", async (req, res) => {
+  try {
+    const { category, filename } = req.params
+    
+    // Validate category
+    const validCategories = PREDEFINED_CATEGORIES.map(cat => cat.slug)
+    if (!validCategories.includes(category)) {
+      return res.status(400).json({ error: "Invalid category" })
+    }
+
+    const filePath = path.join(__dirname, '../uploads', category, filename)
+    
+    if (!fs.existsSync(filePath)) {
+      return res.status(404).json({ error: "Image not found" })
+    }
+
+    fs.unlinkSync(filePath)
+    
+    res.json({
+      message: "Image deleted successfully",
+      filename,
+      category
+    })
+  } catch (error) {
+    res.status(500).json({ error: "Failed to delete image", message: error.message })
   }
 })
 

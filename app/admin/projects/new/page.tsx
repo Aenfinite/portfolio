@@ -15,6 +15,7 @@ import { Switch } from "@/components/ui/switch"
 import { ArrowLeft, Plus, X } from "lucide-react"
 import { projectsAPI, categoriesAPI } from "@/lib/api"
 import type { Category } from "@/lib/types"
+import ImagePicker from "@/components/ImagePicker"
 
 export default function NewProjectPage() {
   const router = useRouter()
@@ -145,13 +146,12 @@ export default function NewProjectPage() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="imageSrc">Main Image URL *</Label>
-                <Input
-                  id="imageSrc"
+                <Label>Main Image *</Label>
+                <ImagePicker
                   value={formData.imageSrc}
-                  onChange={(e) => setFormData({ ...formData, imageSrc: e.target.value })}
-                  placeholder="/images/project-1.webp"
-                  required
+                  onChange={(imageUrl) => setFormData({ ...formData, imageSrc: imageUrl })}
+                  placeholder="Select main image..."
+                  category={formData.category}
                 />
               </div>
 
@@ -278,11 +278,14 @@ export default function NewProjectPage() {
             <CardContent className="space-y-4">
               {formData.images.map((image, index) => (
                 <div key={index} className="flex gap-2">
-                  <Input
-                    value={image}
-                    onChange={(e) => updateArrayItem("images", index, e.target.value)}
-                    placeholder="/images/project-detail-1.jpg"
-                  />
+                  <div className="flex-1">
+                    <ImagePicker
+                      value={image}
+                      onChange={(imageUrl) => updateArrayItem("images", index, imageUrl)}
+                      placeholder={`Select additional image ${index + 1}...`}
+                      category={formData.category}
+                    />
+                  </div>
                   {formData.images.length > 1 && (
                     <Button
                       type="button"
