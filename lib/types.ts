@@ -11,11 +11,6 @@ export interface Project {
   images: string[]
   tags: string[]
   technologies: string[]
-  liveUrl?: string
-  githubUrl?: string
-  gradientFrom: string
-  gradientTo: string
-  priority: boolean
   category: string
   published: boolean
   createdAt?: string

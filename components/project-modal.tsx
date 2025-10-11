@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 export type ProjectDetails = {
   title: string
   subtitle: string
+  imageSrc: string
   description: string
   challenge: string
   solution: string
@@ -16,10 +17,6 @@ export type ProjectDetails = {
   images: string[]
   tags: string[]
   technologies: string[]
-  liveUrl?: string
-  githubUrl?: string
-  gradientFrom: string
-  gradientTo: string
 }
 
 type Props = {
@@ -29,45 +26,32 @@ type Props = {
 }
 
 // Helper function to determine if a color is light or dark
-function getTextColorForBackground(gradientFrom: string, gradientTo: string): string {
-  // Convert hex to RGB and calculate luminance
-  function hexToLuminance(hex: string): number {
-    const rgb = hex.replace('#', '').match(/.{2}/g)?.map(x => parseInt(x, 16)) || [0, 0, 0]
-    const [r, g, b] = rgb.map(c => {
-      c = c / 255
-      return c <= 0.03928 ? c / 12.92 : Math.pow((c + 0.055) / 1.055, 2.4)
-    })
-    return 0.2126 * r + 0.7152 * g + 0.0722 * b
-  }
-
-  // Calculate average luminance of both gradient colors
-  const fromLuminance = hexToLuminance(gradientFrom)
-  const toLuminance = hexToLuminance(gradientTo)
-  const avgLuminance = (fromLuminance + toLuminance) / 2
-  
-  // Return white text for dark backgrounds, dark text for light backgrounds
-  return avgLuminance > 0.5 ? 'text-neutral-900' : 'text-white'
-}
-
 export default function ProjectModal({ project, open, onOpenChange }: Props) {
   if (!project) return null
   
-  const textColorClass = getTextColorForBackground(project.gradientFrom, project.gradientTo)
-  const subtitleColorClass = textColorClass === 'text-white' ? 'text-white/90' : 'text-neutral-700'
+  const textColorClass = 'text-neutral-900'
+  const subtitleColorClass = 'text-neutral-700'
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-[95vw] w-[95vw] max-h-[95vh] overflow-y-auto p-0 gap-0 bg-white/80 backdrop-blur-2xl border-white/20 shadow-2xl">
         <DialogTitle className="sr-only">{project.title}</DialogTitle>
 
-        <div
-          className="relative p-12 pb-16"
-          style={{
-            backgroundImage: `linear-gradient(135deg, ${project.gradientFrom}, ${project.gradientTo})`,
-          }}
-        >
-          <div className="absolute inset-0 bg-white/10 backdrop-blur-sm" />
+        {/* Hero Section with Image Background */}
+        <div className="relative h-[60vh] w-full">
+          {/* Main Image as Background */}
+          <div className="absolute inset-0">
+            <Image
+              src={project.imageSrc || "/placeholder.svg"}
+              alt={`${project.title} main image`}
+              fill
+              className="object-cover"
+            />
+            {/* Overlay gradient */}
+            <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-black/20" />
+          </div>
 
+          {/* Close Button */}
           <button
             onClick={() => onOpenChange(false)}
             className="absolute right-6 top-6 rounded-full bg-white/90 p-2.5 backdrop-blur-xl transition-all hover:bg-white hover:scale-110 z-10"
@@ -76,20 +60,23 @@ export default function ProjectModal({ project, open, onOpenChange }: Props) {
             <X className="h-5 w-5 text-neutral-900" />
           </button>
 
-          <div className="space-y-5 relative z-10">
-            <div className="flex flex-wrap gap-2">
-              {project.tags.map((tag) => (
-                <Badge
-                  key={tag}
-                  variant="secondary"
-                  className="bg-white/90 text-neutral-900 border-white/40 backdrop-blur-xl shadow-lg"
-                >
-                  {tag}
-                </Badge>
-              ))}
+          {/* Content overlay */}
+          <div className="absolute inset-0 flex flex-col justify-end p-12">
+            <div className="space-y-5">
+              <div className="flex flex-wrap gap-2">
+                {project.tags.map((tag) => (
+                  <Badge
+                    key={tag}
+                    variant="secondary"
+                    className="bg-white/90 text-neutral-900 border-white/40 backdrop-blur-xl shadow-lg"
+                  >
+                    {tag}
+                  </Badge>
+                ))}
+              </div>
+              <h2 className="text-5xl md:text-6xl font-black tracking-tight text-white">{project.title}</h2>
+              <p className="text-2xl text-white/90 max-w-3xl">{project.subtitle}</p>
             </div>
-            <h2 className={`text-5xl md:text-6xl font-black tracking-tight ${textColorClass}`}>{project.title}</h2>
-            <p className={`text-2xl ${subtitleColorClass} max-w-3xl`}>{project.subtitle}</p>
           </div>
         </div>
 
@@ -99,18 +86,6 @@ export default function ProjectModal({ project, open, onOpenChange }: Props) {
             <h3 className="text-3xl font-bold mb-4 text-neutral-900">Overview</h3>
             <p className="text-xl leading-relaxed text-neutral-600">{project.description}</p>
           </section>
-
-          {/* Main Image */}
-          {project.images[0] && (
-            <div className="relative aspect-video w-full overflow-hidden rounded-3xl border border-white/40 shadow-2xl backdrop-blur-xl">
-              <Image
-                src={project.images[0] || "/placeholder.svg"}
-                alt={`${project.title} main image`}
-                fill
-                className="object-cover"
-              />
-            </div>
-          )}
 
           {/* Challenge */}
           <section className="bg-white/60 backdrop-blur-xl rounded-3xl p-8 border border-white/40 shadow-xl">
@@ -172,32 +147,7 @@ export default function ProjectModal({ project, open, onOpenChange }: Props) {
             </div>
           </section>
 
-          {/* Links */}
-          {(project.liveUrl || (project.githubUrl && project.githubUrl.trim() !== "")) && (
-            <div className="flex flex-wrap gap-4 pt-6">
-              {project.liveUrl && project.liveUrl.trim() !== "" && (
-                <Button asChild size="lg" className="rounded-full text-lg px-8 py-6 shadow-xl">
-                  <a href={project.liveUrl} target="_blank" rel="noopener noreferrer">
-                    View Live Site
-                    <ExternalLink className="ml-2 h-5 w-5" />
-                  </a>
-                </Button>
-              )}
-              {project.githubUrl && project.githubUrl.trim() !== "" && (
-                <Button
-                  asChild
-                  variant="outline"
-                  size="lg"
-                  className="rounded-full bg-white/60 backdrop-blur-xl text-lg px-8 py-6 shadow-xl border-white/40"
-                >
-                  <a href={project.githubUrl} target="_blank" rel="noopener noreferrer">
-                    <Github className="mr-2 h-5 w-5" />
-                    View Code
-                  </a>
-                </Button>
-              )}
-            </div>
-          )}
+
         </div>
       </DialogContent>
     </Dialog>

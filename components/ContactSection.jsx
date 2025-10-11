@@ -1,6 +1,6 @@
 "use client"
 import CardSwap, { Card } from "./CardSwap"
-import { ArrowRight, Mail, Phone, MapPin } from "lucide-react"
+import { ArrowRight, Mail, Phone, MapPin, VideoIcon } from "lucide-react"
 
 const ContactSection = () => {
   const handleContactClick = () => {
@@ -38,13 +38,13 @@ const ContactSection = () => {
                   <div className="w-10 h-10 sm:w-12 sm:h-12 bg-black rounded-full flex items-center justify-center flex-shrink-0">
                     <Phone className="w-4 h-4 sm:w-6 sm:h-6 text-white" />
                   </div>
-                  <span className="text-sm sm:text-base md:text-lg font-medium">+1 (555) 123-4567</span>
+                  <span className="text-sm sm:text-base md:text-lg font-medium">+1 (303) 419-9782</span>
                 </div>
                 <div className="flex items-center space-x-3 sm:space-x-4 md:space-x-6 text-gray-700">
                   <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white border-2 border-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
-                    <MapPin className="w-4 h-4 sm:w-6 sm:h-6 text-gray-700" />
+                    <VideoIcon className="w-4 h-4 sm:w-6 sm:h-6 text-gray-700" />
                   </div>
-                  <span className="text-sm sm:text-base md:text-lg font-medium">Innovation District, Tech City</span>
+                  <span className="text-sm sm:text-base md:text-lg font-medium" href="https://calendly.com/aenfinite/business-meeting">Book A Free Strategy Call</span>
                 </div>
               </div>
 
@@ -95,16 +95,19 @@ const ContactSection = () => {
                   </Card>
 
                   <Card>
-                    <div className="bg-blue-600 text-white p-6 sm:p-7 md:p-8 lg:p-10 rounded-xl md:rounded-2xl shadow-lg drop-shadow-lg h-full flex flex-col justify-center items-center text-center">
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 lg:w-20 lg:h-20 bg-white/20 rounded-full flex items-center justify-center mb-4 sm:mb-5 md:mb-6">
-                        <MapPin className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-10 lg:h-10" />
-                      </div>
-                      <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 md:mb-5 font-champ">Visit Our Office</h3>
-                      <p className="text-base sm:text-lg md:text-xl lg:text-2xl opacity-90 leading-relaxed">
-                        Come see our creative workspace and meet the team behind the innovation.
-                      </p>
-                    </div>
-                  </Card>
+  <div className="bg-blue-600 text-white p-6 sm:p-7 md:p-8 lg:p-10 rounded-xl md:rounded-2xl shadow-lg drop-shadow-lg h-full flex flex-col justify-center items-center text-center">
+    <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 lg:w-20 lg:h-20 bg-white/20 rounded-full flex items-center justify-center mb-4 sm:mb-5 md:mb-6">
+      <VideoIcon className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-10 lg:h-10" />
+    </div>
+    <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 md:mb-5 font-champ">
+      Book a Consultation Online
+    </h3>
+    <p className="text-base sm:text-lg md:text-xl lg:text-2xl opacity-90 leading-relaxed">
+      Schedule a free strategy call with our experts from anywhere in the world — let's bring your ideas to life.
+    </p>
+  </div>
+</Card>
+
                 </CardSwap>
               </div>
             </div>

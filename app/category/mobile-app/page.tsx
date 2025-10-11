@@ -149,10 +149,8 @@ export default function MobileAppPage() {
                   title={p.title}
                   subtitle={p.subtitle}
                   imageSrc={p.imageSrc}
+                  images={p.images}
                   tags={p.tags}
-                  priority={p.priority}
-                  gradientFrom={p.gradientFrom}
-                  gradientTo={p.gradientTo}
                   imageContainerClassName="lg:h-full"
                   containerClassName="lg:h-[calc(100svh-2rem)]"
                   revealDelay={idx * 0.06}

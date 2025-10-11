@@ -32,11 +32,7 @@ export default function NewProjectPage() {
     images: [""],
     tags: [""],
     technologies: [""],
-    liveUrl: "",
-    githubUrl: "",
-    gradientFrom: "#e0e7ff",
-    gradientTo: "#c7d2fe",
-    priority: false,
+
     category: "",
     published: true,
   })
@@ -362,64 +358,6 @@ export default function NewProjectPage() {
                   <Plus className="mr-2 h-4 w-4" />
                   Add Technology
                 </Button>
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Links & Styling</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="liveUrl">Live URL</Label>
-                <Input
-                  id="liveUrl"
-                  value={formData.liveUrl}
-                  onChange={(e) => setFormData({ ...formData, liveUrl: e.target.value })}
-                  placeholder="https://example.com"
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="githubUrl">GitHub URL</Label>
-                <Input
-                  id="githubUrl"
-                  value={formData.githubUrl}
-                  onChange={(e) => setFormData({ ...formData, githubUrl: e.target.value })}
-                  placeholder="https://github.com/username/repo"
-                />
-              </div>
-
-              <div className="grid gap-4 md:grid-cols-2">
-                <div className="space-y-2">
-                  <Label htmlFor="gradientFrom">Gradient From</Label>
-                  <Input
-                    id="gradientFrom"
-                    type="color"
-                    value={formData.gradientFrom}
-                    onChange={(e) => setFormData({ ...formData, gradientFrom: e.target.value })}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="gradientTo">Gradient To</Label>
-                  <Input
-                    id="gradientTo"
-                    type="color"
-                    value={formData.gradientTo}
-                    onChange={(e) => setFormData({ ...formData, gradientTo: e.target.value })}
-                  />
-                </div>
-              </div>
-
-              <div className="flex items-center justify-between space-x-2">
-                <Label htmlFor="priority">Priority Loading</Label>
-                <Switch
-                  id="priority"
-                  checked={formData.priority}
-                  onCheckedChange={(checked) => setFormData({ ...formData, priority: checked })}
-                />
               </div>
             </CardContent>
           </Card>

@@ -48,26 +48,6 @@ const projectSchema = new mongoose.Schema(
         type: String,
       },
     ],
-    liveUrl: {
-      type: String,
-      default: "",
-    },
-    githubUrl: {
-      type: String,
-      default: "",
-    },
-    gradientFrom: {
-      type: String,
-      required: true,
-    },
-    gradientTo: {
-      type: String,
-      required: true,
-    },
-    priority: {
-      type: Boolean,
-      default: false,
-    },
     category: {
       type: String,
       required: true,

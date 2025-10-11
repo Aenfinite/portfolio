@@ -10,10 +10,9 @@ type Props = {
   title?: string
   subtitle?: string
   imageSrc?: string
+  images?: string[]
   tags?: string[]
-  priority?: boolean
-  gradientFrom?: string
-  gradientTo?: string
+
   imageContainerClassName?: string
   containerClassName?: string
   revealDelay?: number
@@ -24,10 +23,9 @@ export default function ProjectCard({
   title = "Project title",
   subtitle = "Project subtitle",
   imageSrc = "/placeholder.svg?height=720&width=1280",
+  images = [],
   tags = ["Design", "Web"],
-  priority = false,
-  gradientFrom = "#e0e7ff",
-  gradientTo = "#c7d2fe",
+
   imageContainerClassName,
   containerClassName,
   revealDelay = 0,
@@ -38,9 +36,7 @@ export default function ProjectCard({
       <RevealOnView
         delay={revealDelay}
         className="rounded-3xl border border-neutral-200 p-1 shadow-[0_10px_60px_-10px_rgba(0,0,0,0.1)] lg:h-full"
-        style={{
-          backgroundImage: `linear-gradient(135deg, ${gradientFrom}, ${gradientTo})`,
-        }}
+
       >
         <div className="relative overflow-hidden rounded-[1.35rem] bg-white lg:h-full">
           {/* Image */}
@@ -55,7 +51,7 @@ export default function ProjectCard({
               alt={title}
               fill
               sizes="(min-width: 1024px) 66vw, 100vw"
-              priority={priority}
+
               className="object-cover"
             />
             {/* Subtle vignette */}

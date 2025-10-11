@@ -41,7 +41,7 @@ async function initializePredefinedCategories() {
 
 // MongoDB Connection
 mongoose
-  .connect(process.env.MONGODB_URI || "mongodb+srv://aenfinitee:aenfinitee@cluster0.4y3vjsz.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
+  .connect(process.env.MONGODB_URI || "mongodb+srv://aenfinitee:aenfinitee@cluster0.vigrho8.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0", {
     useNewUrlParser: true,
     useUnifiedTopology: true,
   })
