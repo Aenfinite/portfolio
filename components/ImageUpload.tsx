@@ -131,7 +131,7 @@ export default function ImageUpload({ onImageUploaded }: ImageUploadProps) {
 
   // Copy image URL
   const copyImageUrl = (imageUrl: string) => {
-    const fullUrl = `http://localhost:5000${imageUrl}`
+    const fullUrl = `https://api.aenfinite.com${imageUrl}`
     navigator.clipboard.writeText(fullUrl)
     alert("Image URL copied to clipboard!")
   }
@@ -247,7 +247,7 @@ export default function ImageUpload({ onImageUploaded }: ImageUploadProps) {
                   >
                     <div className="aspect-square relative">
                       <Image
-                        src={`http://localhost:5000${image.imageUrl}`}
+                        src={`https://api.aenfinite.com${image.imageUrl}`}
                         alt={image.filename}
                         fill
                         className="object-cover"

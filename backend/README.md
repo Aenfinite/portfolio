@@ -72,14 +72,14 @@ Authorization: Bearer <your-jwt-token>
 
 1. Create an admin account:
 \`\`\`bash
-curl -X POST http://localhost:5000/api/admin/register \
+curl -X POST https://api.aenfinite.com/api/admin/register \
   -H "Content-Type: application/json" \
   -d '{"username":"admin","email":"admin@example.com","password":"yourpassword"}'
 \`\`\`
 
 2. Login to get token:
 \`\`\`bash
-curl -X POST http://localhost:5000/api/admin/login \
+curl -X POST https://api.aenfinite.com/api/admin/login \
   -H "Content-Type: application/json" \
   -d '{"email":"admin@example.com","password":"yourpassword"}'
 \`\`\`

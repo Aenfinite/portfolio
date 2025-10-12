@@ -72,7 +72,7 @@ export default function ImagePicker({ value, onChange, placeholder = "Select an 
 
   // Handle image selection
   const handleImageSelect = (imageUrl: string) => {
-    const fullUrl = `http://localhost:5000${imageUrl}`
+    const fullUrl = `https://api.aenfinite.com${imageUrl}`
     onChange(fullUrl)
     setOpen(false)
   }
@@ -95,7 +95,7 @@ export default function ImagePicker({ value, onChange, placeholder = "Select an 
       const response = await imageAPI.uploadSingle(targetCategory, file)
       
       // Auto-select the uploaded image
-      const fullUrl = `http://localhost:5000${response.imageUrl}`
+      const fullUrl = `https://api.aenfinite.com${response.imageUrl}`
       onChange(fullUrl)
       
       // Refresh the images list
@@ -222,7 +222,7 @@ export default function ImagePicker({ value, onChange, placeholder = "Select an 
                   ) : (
                     <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 max-h-96 overflow-y-auto">
                       {images.map((image) => {
-                        const fullImageUrl = `http://localhost:5000${image.imageUrl}`
+                        const fullImageUrl = `https://api.aenfinite.com${image.imageUrl}`
                         const isSelected = value === fullImageUrl
                         
                         return (

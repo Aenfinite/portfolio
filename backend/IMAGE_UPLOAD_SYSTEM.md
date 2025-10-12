@@ -41,7 +41,7 @@ Body:
 
 **Example:**
 ```bash
-curl -X POST http://localhost:5000/api/admin/upload/ui-ux \
+curl -X POST https://api.aenfinite.com/api/admin/upload/ui-ux \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -F "image=@path/to/image.jpg"
 ```
@@ -58,7 +58,7 @@ Body:
 
 **Example:**
 ```bash
-curl -X POST http://localhost:5000/api/admin/upload/branding/multiple \
+curl -X POST https://api.aenfinite.com/api/admin/upload/branding/multiple \
   -H "Authorization: Bearer YOUR_TOKEN" \
   -F "images=@image1.jpg" \
   -F "images=@image2.png"
@@ -116,7 +116,7 @@ Authorization: Bearer <admin-token>
 
 **Example:**
 ```bash
-curl -X DELETE http://localhost:5000/api/admin/images/ui-ux/dashboard-design-1633024800000-123456789.jpg \
+curl -X DELETE https://api.aenfinite.com/api/admin/images/ui-ux/dashboard-design-1633024800000-123456789.jpg \
   -H "Authorization: Bearer YOUR_TOKEN"
 ```
 
@@ -143,12 +143,12 @@ backend/
 
 Uploaded images are accessible via:
 ```
-http://localhost:5000/uploads/{category}/{filename}
+https://api.aenfinite.com/uploads/{category}/{filename}
 ```
 
 **Example:**
 ```
-http://localhost:5000/uploads/ui-ux/dashboard-design-1633024800000-123456789.jpg
+https://api.aenfinite.com/uploads/ui-ux/dashboard-design-1633024800000-123456789.jpg
 ```
 
 ## Frontend Integration
