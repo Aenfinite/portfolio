@@ -1,0 +1,378 @@
+{
+  "info": {
+    "name": "Portfolio Bulk Upload API",
+    "description": "Collection for bulk uploading portfolio projects and images",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{jwt_token}}",
+        "type": "string"
+      }
+    ]
+  },
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:5000/api"
+    },
+    {
+      "key": "admin_email",
+      "value": "admin@example.com"
+    },
+    {
+      "key": "admin_password",
+      "value": "your_password"
+    }
+  ],
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Admin Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    var jsonData = pm.response.json();",
+                  "    pm.collectionVariables.set('jwt_token', jsonData.token);",
+                  "    console.log('JWT token saved:', jsonData.token);",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{admin_email}}\",\n  \"password\": \"{{admin_password}}\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/login",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Bulk Operations",
+      "item": [
+        {
+          "name": "Bulk Upload Projects with Images",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "projectsData",
+                  "value": "[\n  {\n    \"title\": \"Sample Project 1\",\n    \"subtitle\": \"A sample portfolio project\",\n    \"mainImage\": \"main-image.jpg\",\n    \"description\": \"This is a detailed description of the project\",\n    \"challenge\": \"The main challenge was...\",\n    \"solution\": \"We solved it by...\",\n    \"results\": [\"Result 1\", \"Result 2\"],\n    \"imageFiles\": [\"image1.jpg\", \"image2.jpg\"],\n    \"tags\": [\"web\", \"design\"],\n    \"technologies\": [\"React\", \"Node.js\"],\n    \"category\": \"web-design-development\",\n    \"published\": true\n  }\n]",
+                  "type": "text"
+                },
+                {
+                  "key": "files",
+                  "type": "file",
+                  "src": [],
+                  "description": "Select main-image.jpg (main image for project)"
+                },
+                {
+                  "key": "files",
+                  "type": "file",
+                  "src": [],
+                  "description": "Select image1.jpg (additional image)"
+                },
+                {
+                  "key": "files",
+                  "type": "file",
+                  "src": [],
+                  "description": "Select image2.jpg (additional image)"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/projects/bulk",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "projects", "bulk"]
+            }
+          }
+        },
+        {
+          "name": "Bulk Upload Images Only - Web Design",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "images",
+                  "type": "file",
+                  "src": []
+                },
+                {
+                  "key": "images",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/images/bulk/web-design-development",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "images", "bulk", "web-design-development"]
+            }
+          }
+        },
+        {
+          "name": "Bulk Upload Images Only - Mobile App",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "images",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/images/bulk/mobile-app",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "images", "bulk", "mobile-app"]
+            }
+          }
+        },
+        {
+          "name": "Bulk Upload Images Only - Branding",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "images",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/images/bulk/branding",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "images", "bulk", "branding"]
+            }
+          }
+        },
+        {
+          "name": "Bulk Upload Images Only - UI/UX",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "images",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/images/bulk/ui-ux",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "images", "bulk", "ui-ux"]
+            }
+          }
+        },
+        {
+          "name": "Bulk Upload Images Only - Logo Design",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "images",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/images/bulk/logo-design",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "images", "bulk", "logo-design"]
+            }
+          }
+        },
+        {
+          "name": "Bulk Upload Images Only - Graphic Design",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "images",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/images/bulk/graphic-design",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "images", "bulk", "graphic-design"]
+            }
+          }
+        },
+        {
+          "name": "Bulk Upload Images Only - Packaging Design",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "images",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/images/bulk/packaging-design",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "images", "bulk", "packaging-design"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Individual Operations",
+      "item": [
+        {
+          "name": "Create Single Project",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"title\": \"Single Project\",\n  \"subtitle\": \"A single project\",\n  \"imageSrc\": \"/uploads/web-design-development/image.jpg\",\n  \"description\": \"Project description\",\n  \"challenge\": \"The challenge\",\n  \"solution\": \"The solution\",\n  \"results\": [\"Result 1\"],\n  \"images\": [\"/uploads/web-design-development/image1.jpg\"],\n  \"tags\": [\"web\"],\n  \"technologies\": [\"React\"],\n  \"category\": \"web-design-development\",\n  \"published\": true\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/projects",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "projects"]
+            }
+          }
+        },
+        {
+          "name": "Upload Single Image",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "formdata",
+              "formdata": [
+                {
+                  "key": "image",
+                  "type": "file",
+                  "src": []
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{base_url}}/admin/upload/web-design-development",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "upload", "web-design-development"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Data Retrieval",
+      "item": [
+        {
+          "name": "Get All Projects",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/projects",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "projects"]
+            }
+          }
+        },
+        {
+          "name": "Get All Categories",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/categories",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "categories"]
+            }
+          }
+        },
+        {
+          "name": "Get All Images",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/images",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "images"]
+            }
+          }
+        },
+        {
+          "name": "Get Images by Category",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/admin/images/web-design-development",
+              "host": ["{{base_url}}"],
+              "path": ["admin", "images", "web-design-development"]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

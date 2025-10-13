@@ -386,4 +386,147 @@ router.delete("/images/:category/:filename", async (req, res) => {
   }
 })
 
+// Bulk upload projects with images
+router.post("/projects/bulk", upload.array('files', 50), async (req, res) => {
+  try {
+    const { projectsData } = req.body
+    
+    if (!projectsData) {
+      return res.status(400).json({ error: "No projects data provided" })
+    }
+
+    let projects
+    try {
+      projects = typeof projectsData === 'string' ? JSON.parse(projectsData) : projectsData
+    } catch (parseError) {
+      return res.status(400).json({ error: "Invalid JSON format for projects data" })
+    }
+
+    if (!Array.isArray(projects)) {
+      return res.status(400).json({ error: "Projects data must be an array" })
+    }
+
+    const validCategories = PREDEFINED_CATEGORIES.map(cat => cat.slug)
+    const uploadedProjects = []
+    const errors = []
+
+    // Process uploaded files by name for easy mapping
+    const uploadedFiles = {}
+    if (req.files) {
+      req.files.forEach(file => {
+        uploadedFiles[file.originalname] = file
+      })
+    }
+
+    for (let i = 0; i < projects.length; i++) {
+      try {
+        const projectData = projects[i]
+        
+        // Validate required fields
+        if (!projectData.title || !projectData.subtitle || !projectData.description || 
+            !projectData.challenge || !projectData.solution || !projectData.category) {
+          errors.push(`Project ${i + 1}: Missing required fields`)
+          continue
+        }
+
+        // Validate category
+        if (!validCategories.includes(projectData.category)) {
+          errors.push(`Project ${i + 1}: Invalid category '${projectData.category}'`)
+          continue
+        }
+
+        // Process main image
+        let imageSrc = projectData.imageSrc || ''
+        if (projectData.mainImage && uploadedFiles[projectData.mainImage]) {
+          const file = uploadedFiles[projectData.mainImage]
+          imageSrc = `/uploads/${projectData.category}/${file.filename}`
+        }
+
+        // Process additional images
+        let images = []
+        if (projectData.imageFiles && Array.isArray(projectData.imageFiles)) {
+          for (const imageFileName of projectData.imageFiles) {
+            if (uploadedFiles[imageFileName]) {
+              const file = uploadedFiles[imageFileName]
+              images.push(`/uploads/${projectData.category}/${file.filename}`)
+            }
+          }
+        }
+        
+        // Merge with any existing image URLs
+        if (projectData.images && Array.isArray(projectData.images)) {
+          images = [...images, ...projectData.images]
+        }
+
+        // Create project
+        const project = new Project({
+          title: projectData.title,
+          subtitle: projectData.subtitle,
+          imageSrc: imageSrc,
+          description: projectData.description,
+          challenge: projectData.challenge,
+          solution: projectData.solution,
+          results: projectData.results || [],
+          images: images,
+          tags: projectData.tags || [],
+          technologies: projectData.technologies || [],
+          category: projectData.category,
+          published: projectData.published !== undefined ? projectData.published : true
+        })
+
+        await project.save()
+        uploadedProjects.push(project)
+
+      } catch (projectError) {
+        errors.push(`Project ${i + 1}: ${projectError.message}`)
+      }
+    }
+
+    res.json({
+      message: `Bulk upload completed`,
+      totalProjects: projects.length,
+      successfulUploads: uploadedProjects.length,
+      errors: errors.length,
+      uploadedProjects: uploadedProjects,
+      errorDetails: errors
+    })
+
+  } catch (error) {
+    res.status(500).json({ error: "Bulk upload failed", message: error.message })
+  }
+})
+
+// Bulk upload images only (without creating projects)
+router.post("/images/bulk/:category", upload.array('images', 50), async (req, res) => {
+  try {
+    const category = req.params.category
+    
+    // Validate category
+    const validCategories = PREDEFINED_CATEGORIES.map(cat => cat.slug)
+    if (!validCategories.includes(category)) {
+      return res.status(400).json({ error: "Invalid category" })
+    }
+
+    if (!req.files || req.files.length === 0) {
+      return res.status(400).json({ error: "No image files provided" })
+    }
+
+    const uploadedImages = req.files.map(file => ({
+      originalName: file.originalname,
+      filename: file.filename,
+      imageUrl: `/uploads/${category}/${file.filename}`,
+      size: file.size
+    }))
+
+    res.json({
+      message: `${uploadedImages.length} images uploaded successfully to ${category}`,
+      category: category,
+      images: uploadedImages
+    })
+
+  } catch (error) {
+    res.status(500).json({ error: "Bulk image upload failed", message: error.message })
+  }
+})
+
 module.exports = router

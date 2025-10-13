@@ -1,0 +1,163 @@
+[
+  {
+    "title": "E-commerce Mobile App",
+    "subtitle": "Modern shopping experience for fashion retailer",
+    "mainImage": "ecommerce-app-main.jpg",
+    "description": "A comprehensive mobile application for a fashion retailer, featuring seamless shopping experience, personalized recommendations, and integrated payment solutions.",
+    "challenge": "The client needed a mobile app that could handle high traffic during sales events while providing a smooth user experience across different devices and operating systems.",
+    "solution": "Developed a React Native application with optimized performance, integrated with a robust backend API, featuring real-time inventory management and secure payment processing.",
+    "results": [
+      "40% increase in mobile sales within first quarter",
+      "25% improvement in user engagement",
+      "Reduced cart abandonment by 30%",
+      "5-star average rating on app stores"
+    ],
+    "imageFiles": [
+      "ecommerce-app-1.jpg",
+      "ecommerce-app-2.jpg",
+      "ecommerce-app-3.jpg"
+    ],
+    "tags": ["mobile", "ecommerce", "react-native", "ui/ux"],
+    "technologies": ["React Native", "Node.js", "MongoDB", "Stripe API"],
+    "category": "mobile-app",
+    "published": true
+  },
+  {
+    "title": "Corporate Brand Identity",
+    "subtitle": "Complete rebrand for tech startup",
+    "mainImage": "corporate-brand-main.jpg",
+    "description": "A comprehensive brand identity redesign for a growing tech startup, including logo design, color palette, typography, and brand guidelines.",
+    "challenge": "The startup had outgrown their initial branding and needed a professional identity that would appeal to enterprise clients while maintaining their innovative spirit.",
+    "solution": "Created a modern, scalable brand identity system with a minimalist logo, professional color scheme, and comprehensive brand guidelines for consistent application.",
+    "results": [
+      "Successfully secured 3 major enterprise deals",
+      "Brand recognition increased by 60%",
+      "Professional credibility enhanced",
+      "Consistent brand application across all touchpoints"
+    ],
+    "imageFiles": [
+      "corporate-brand-1.jpg",
+      "corporate-brand-2.jpg",
+      "corporate-brand-logo.jpg"
+    ],
+    "tags": ["branding", "logo", "identity", "corporate"],
+    "technologies": ["Adobe Illustrator", "Adobe Photoshop", "Figma"],
+    "category": "branding",
+    "published": true
+  },
+  {
+    "title": "Restaurant Website Redesign",
+    "subtitle": "Modern web presence for fine dining establishment",
+    "mainImage": "restaurant-web-main.jpg",
+    "description": "Complete website redesign for an upscale restaurant, featuring online reservations, menu showcase, and event booking functionality.",
+    "challenge": "The restaurant's outdated website was not mobile-friendly and lacked online booking capabilities, resulting in lost customers and poor user experience.",
+    "solution": "Designed and developed a responsive website with integrated reservation system, dynamic menu display, and event booking platform using modern web technologies.",
+    "results": [
+      "Online reservations increased by 150%",
+      "Mobile traffic improved by 200%",
+      "Customer engagement increased significantly",
+      "Reduced phone calls for reservations by 40%"
+    ],
+    "imageFiles": [
+      "restaurant-web-1.jpg",
+      "restaurant-web-2.jpg",
+      "restaurant-web-mobile.jpg"
+    ],
+    "tags": ["website", "responsive", "restaurant", "booking"],
+    "technologies": ["Next.js", "React", "Node.js", "PostgreSQL"],
+    "category": "web-design-development",
+    "published": true
+  },
+  {
+    "title": "Product Packaging Design",
+    "subtitle": "Sustainable packaging for organic skincare brand",
+    "mainImage": "packaging-main.jpg",
+    "description": "Eco-friendly packaging design for an organic skincare line, focusing on sustainability while maintaining premium brand appeal.",
+    "challenge": "Create packaging that reflects the brand's commitment to sustainability without compromising on visual appeal or product protection.",
+    "solution": "Developed a packaging system using recycled materials with minimalist design, featuring botanical illustrations and eco-friendly printing techniques.",
+    "results": [
+      "100% recyclable packaging materials",
+      "25% reduction in packaging costs",
+      "Positive customer feedback on sustainability",
+      "Increased brand loyalty by 35%"
+    ],
+    "imageFiles": [
+      "packaging-1.jpg",
+      "packaging-2.jpg",
+      "packaging-mockup.jpg"
+    ],
+    "tags": ["packaging", "sustainable", "skincare", "eco-friendly"],
+    "technologies": ["Adobe Illustrator", "Adobe Photoshop", "3D Mockups"],
+    "category": "packaging-design",
+    "published": true
+  },
+  {
+    "title": "Dashboard UI/UX Design",
+    "subtitle": "Analytics dashboard for SaaS platform",
+    "mainImage": "dashboard-main.jpg",
+    "description": "User interface and experience design for a comprehensive analytics dashboard, helping users visualize complex data in an intuitive way.",
+    "challenge": "Transform complex data sets into easily understandable visualizations while maintaining high usability standards for users of varying technical expertise.",
+    "solution": "Created a clean, intuitive dashboard interface with customizable widgets, advanced filtering options, and responsive design for all devices.",
+    "results": [
+      "User satisfaction increased by 45%",
+      "Time to insights reduced by 60%",
+      "User adoption rate improved by 80%",
+      "Customer churn reduced by 20%"
+    ],
+    "imageFiles": [
+      "dashboard-1.jpg",
+      "dashboard-2.jpg",
+      "dashboard-mobile.jpg"
+    ],
+    "tags": ["dashboard", "analytics", "saas", "data-visualization"],
+    "technologies": ["Figma", "React", "D3.js", "Chart.js"],
+    "category": "ui-ux",
+    "published": true
+  },
+  {
+    "title": "Minimalist Logo Design",
+    "subtitle": "Clean identity for architecture firm",
+    "mainImage": "logo-main.jpg",
+    "description": "Simple yet sophisticated logo design for a boutique architecture firm, emphasizing clean lines and professional aesthetics.",
+    "challenge": "Create a timeless logo that represents architectural precision and creativity while remaining versatile across various applications.",
+    "solution": "Developed a geometric logo using architectural elements, with a monochromatic color scheme that works across all media and scales perfectly.",
+    "results": [
+      "Brand recognition increased significantly",
+      "Professional credibility enhanced",
+      "Consistent brand application achieved",
+      "Client testimonials praised the design"
+    ],
+    "imageFiles": [
+      "logo-1.jpg",
+      "logo-variations.jpg",
+      "logo-applications.jpg"
+    ],
+    "tags": ["logo", "minimalist", "architecture", "geometric"],
+    "technologies": ["Adobe Illustrator", "Adobe Photoshop"],
+    "category": "logo-design",
+    "published": true
+  },
+  {
+    "title": "Marketing Campaign Graphics",
+    "subtitle": "Social media graphics for fitness brand",
+    "mainImage": "graphics-main.jpg",
+    "description": "Comprehensive social media graphics package for a fitness brand's marketing campaign, including post designs, stories, and promotional materials.",
+    "challenge": "Create engaging visual content that motivates the target audience while maintaining brand consistency across multiple social media platforms.",
+    "solution": "Designed a cohesive visual system with energetic colors, motivational typography, and lifestyle photography that resonates with the fitness community.",
+    "results": [
+      "Social media engagement increased by 120%",
+      "Follower growth rate improved by 85%",
+      "Brand awareness significantly enhanced",
+      "Campaign reached 2M+ impressions"
+    ],
+    "imageFiles": [
+      "graphics-1.jpg",
+      "graphics-2.jpg",
+      "graphics-social.jpg"
+    ],
+    "tags": ["social-media", "fitness", "marketing", "graphics"],
+    "technologies": ["Adobe Photoshop", "Adobe Illustrator", "Canva"],
+    "category": "graphic-design",
+    "published": true
+  }
+]
