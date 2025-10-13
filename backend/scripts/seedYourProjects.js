@@ -2,345 +2,810 @@ const mongoose = require('mongoose');
 const Project = require('../models/Project');
 require('dotenv').config();
 
+// Category mapping from display name to database enum value
+const categoryMapping = {
+  'Branding': 'branding',
+  'Web Design & Development': 'web-design-development', 
+  'Graphic Design': 'graphic-design',
+  'Logo Design': 'logo-design',
+  'UI/UX Design': 'ui-ux',
+  'Mobile App': 'mobile-app',
+  'Packaging Design': 'packaging-design'
+};
+
+function getCategorySlug(categoryName) {
+  const mapped = categoryMapping[categoryName];
+  if (mapped) return mapped;
+  
+  return categoryName.toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/[^a-z0-9-]/g, '')
+    .replace(/-+/g, '-');
+}
+
+function formatImageUrl(imageName, categorySlug) {
+  if (!imageName) return '';
+  return `https://api.aenfinite.com/uploads/${categorySlug}/${imageName}`;
+}
+
 // Your projects data
 const projectsData = [
   {
-    "title": "Modern & Vibrant Social Media Templates for Fashion E-commerce",
-    "subtitle": "A versatile collection of eye-catching Instagram post templates designed to boost engagement and drive online sales for fashion brands.",
-    "imageSrc": "/uploads/graphic-design/5f39d5c21a2c7_thumb900.jpg",
-    "description": "This project involved the design and creation of a cohesive set of six social media templates tailored for online fashion stores and boutiques. The goal was to provide a ready-to-use toolkit for businesses to announce new arrivals, promote sales, and showcase products in a visually appealing and consistent manner. Each template features clean layouts, bold typography, and strategic use of color to capture user attention on crowded social media feeds.",
-    "challenge": "The primary challenge was to create a set of templates that were not only trendy and aligned with the fashion industry's aesthetic but also highly flexible and user-friendly. The designs needed to be easily customizable for brands with varying visual identities, allowing them to insert their own product images, logos, and promotional text without compromising the design's integrity. The key was to balance a unique, polished look with practical, easy-to-edit functionality.",
-    "solution": "The solution was to develop a collection of templates using a modern, minimalist approach with vibrant color accents. I created a structured layout with clearly defined zones for images, headlines (e.g., 'JUST FOR YOU', 'SUPER SALE'), and calls-to-action ('Shop Now', '30% OFF'). By using a consistent font family and a complementary color palette, the templates work well individually or as part of a larger campaign, ensuring brand consistency. The designs were created to be easily editable in popular software like Adobe Photoshop or Canva.",
-    "results": [
-      "A comprehensive and reusable set of 6 high-impact social media templates.",
-      "Streamlined the content creation process for clients, saving time and resources.",
-      "Empowered small businesses to maintain a professional and consistent brand presence online.",
-      "Designs are optimized to increase click-through rates with clear calls-to-action."
-    ],
-    "images": [
-      "/uploads/graphic-design/5f39d5c21a2c7_thumb900.jpg"
-    ],
-    "tags": [
-      "Social Media Design",
-      "Instagram Templates",
-      "Fashion Marketing",
-      "E-commerce Graphics",
-      "Brand Identity",
-      "Digital Marketing",
-      "Sale Promotion",
-      "Graphic Design"
-    ],
-    "technologies": [
-      "Adobe Photoshop",
-      "Adobe Illustrator",
-      "Canva"
-    ],
-    "category": "graphic-design",
-    "published": true
-  },
-  {
-    "title": "R5 Autotech: E-commerce Platform for Luxury Car Parts",
-    "subtitle": "A custom web design and development project to create a seamless online shopping experience for a supplier of authentic automotive spare parts.",
-    "imageSrc": "/uploads/web-design-development/screencapture-r5autotech-co-uk.jpg",
-    "description": "This project involved the end-to-end creation of a bespoke e-commerce website for R5 Autotech, a specialist in premium and luxury car parts for brands like Audi, Bentley, and Volkswagen. The platform is designed with a clean, professional aesthetic to build customer trust and reflect the high quality of the products. It features intuitive navigation, clear product categorization, and a streamlined user journey from browsing to checkout.",
-    "challenge": "The primary challenge was to design a user interface that simplifies the often-complex process of finding specific auto parts. The site needed to handle a diverse inventory while providing a high-end, trustworthy experience for a discerning customer base. The backend also required a robust system for managing products, inventory, and orders efficiently.",
-    "solution": "A custom e-commerce solution was developed using a scalable platform. We implemented a clean, responsive design with a powerful search function and logical categorization by vehicle brand. High-quality imagery and detailed product pages help users confirm they are purchasing the correct part. The user experience is optimized for both desktop and mobile devices, and a secure, streamlined checkout process was integrated to maximize conversions.",
-    "results": [
-      "Successfully launched a professional and fully functional e-commerce store.",
-      "Created an intuitive user experience that simplifies the search for specific parts.",
-      "Established a strong online presence that conveys trust and authority in the luxury auto parts market.",
-      "Provided the client with an easy-to-use admin panel for managing products and orders."
-    ],
-    "images": [
-      "/uploads/web-design-development/screencapture-r5autotech-co-uk.jpg"
-    ],
-    "tags": [
-      "Web Design",
-      "Web Development",
-      "E-commerce",
-      "UI/UX",
-      "Automotive",
-      "Responsive Design",
-      "WooCommerce"
-    ],
-    "technologies": [
-      "HTML5",
-      "CSS3",
-      "JavaScript",
-      "PHP",
-      "WordPress",
-      "WooCommerce",
-      "MySQL"
-    ],
-    "category": "web-design-development",
-    "published": true
-  },
-  {
-    "title": "Windsor Beauty: B2B E-commerce Portal for Salon Professionals",
-    "subtitle": "A comprehensive e-commerce website designed exclusively for licensed beauty professionals, featuring a members-only product catalog and wholesale pricing.",
-    "imageSrc": "/uploads/web-design-development/Windsor-home.jpg",
-    "description": "This project involved the complete design and development of a B2B e-commerce platform for Windsor Beauty, a key distributor of professional salon products in Michigan. The website serves as an exclusive online store for licensed professionals, offering a vast catalog of hair care, hair color, and styling products. The platform includes a dynamic homepage for promotions, detailed product pages, and a multi-level category structure to ensure easy navigation through thousands of items.",
-    "challenge": "The primary challenge was to create a dual-experience website. It needed to serve as a public-facing informational site while restricting full catalog access and pricing to verified, logged-in professional customers. This required a robust user registration, verification, and role-management system. Additionally, the site architecture had to logically organize an extensive and complex product inventory from numerous brands to allow for a quick and efficient ordering process for busy professionals.",
-    "solution": "We developed a custom e-commerce solution with a sophisticated user authentication system. A role-based access control was implemented, ensuring that wholesale pricing and the 'Add to Cart' functionality were only visible to approved accounts. The front-end features a clean, intuitive navigation with a persistent category sidebar and effective search, allowing users to quickly find products. The product pages were designed to provide all necessary information, including detailed descriptions, reviews, and related items, to facilitate an informed purchasing decision.",
-    "results": [
-      "Launched a secure, reliable online ordering portal available 24/7 to professional clients.",
-      "Successfully implemented a user-gated system to protect wholesale pricing and product information.",
-      "Streamlined the purchasing process for salon professionals, leading to increased user engagement.",
-      "Provided the client with a powerful platform to manage their extensive product catalog and B2B client base."
-    ],
-    "images": [
-      "/uploads/web-design-development/Windsor-home.jpg",
-      "/uploads/web-design-development/Windsor-category.jpg",
-      "/uploads/web-design-development/Windsor-product-page.jpg"
-    ],
-    "tags": [
-      "Web Design",
-      "Web Development",
-      "B2B E-commerce",
-      "Wholesale Portal",
-      "User Authentication",
-      "Magento",
-      "UI/UX",
-      "Beauty Industry"
-    ],
-    "technologies": [
-      "HTML5",
-      "CSS3",
-      "JavaScript",
-      "PHP",
-      "Magento",
-      "MySQL"
-    ],
-    "category": "web-design-development",
-    "published": true
-  },
-  {
-    "title": "Brand Identity & Cover Design for 'True Magic' Novel",
-    "subtitle": "A striking book cover design that establishes a unique visual identity for a contemporary novel, blending retro aesthetics with modern minimalism.",
-    "imageSrc": "/uploads/branding/3---truemagic.jpg",
-    "description": "This project involved creating the complete brand identity and cover art for the novel 'True Magic' by Colin Sims. The design centers around a powerful and evocative aesthetic, utilizing a limited color palette of warm orange, off-white, and black to create immediate visual impact. The bold, stylized typography for the title serves as the main graphic element, while the central illustration—a classic car within an abstract emblem—hints at themes of journey, mystery, and the extraordinary in the everyday.",
-    "challenge": "The main challenge was to visually brand a novel titled 'True Magic' in a way that would appeal to a modern fiction audience, avoiding clichés associated with the fantasy genre. The design needed to be intriguing and sophisticated, accurately conveying a tone of mystery or magical realism rather than traditional wizards and spells. It had to stand out in a competitive market, both on physical shelves and as a digital thumbnail.",
-    "solution": "The solution was to ground the concept in a tangible, retro-inspired reality. The use of a classic car as a key visual element provides a familiar anchor, while the abstract shapes and bold typography suggest the 'magic' is unconventional. The minimalist approach and high-contrast colors ensure the cover is eye-catching and memorable. This design strategy successfully creates a unique brand for the book, promising a story that is both gritty and fantastical.",
-    "results": [
-      "A compelling and market-ready book cover that strongly establishes the novel's unique brand.",
-      "The design successfully captures a specific, nuanced tone that differentiates it from genre competitors.",
-      "A versatile visual identity that can be extended to marketing materials like posters, social media assets, and author branding.",
-      "Positive feedback on the design's ability to generate intrigue and attract target readers."
-    ],
-    "images": [
-      "/uploads/branding/3---truemagic.jpg"
-    ],
-    "tags": [
-      "Branding",
-      "Book Cover Design",
-      "Graphic Design",
-      "Typography",
-      "Publishing",
-      "Visual Identity",
-      "Illustration"
-    ],
-    "technologies": [
-      "Adobe Illustrator",
-      "Adobe Photoshop",
-      "Adobe InDesign"
-    ],
-    "category": "branding",
-    "published": true
-  },
-  {
-    "title": "Cover Design & Branding for 'Spencer's Risk'",
-    "subtitle": "A character-driven book cover that uses bold iconography and a high-contrast color palette to capture the novel's unique blend of dark humor and emotional depth.",
-    "imageSrc": "/uploads/branding/7-risk.jpg",
-    "description": "This project involved creating the cover and brand identity for the novel 'Spencer's Risk' by Andy Greenhalgh. The design is centered on a memorable and symbolic central icon: a spade stylized to resemble a mustachioed skull, representing themes of risk, death, and quirky character. The gritty, textured background combined with a vibrant pink, handwritten title creates a contemporary, edgy feel. The overall aesthetic was crafted to visually communicate the novel's complex tone, described by comedian Jeremy Hardy as 'by turns funny, gripping and poignant.'",
-    "challenge": "The primary challenge was to visually represent a story with a complex and nuanced tone. The cover needed to convey dark, high-stakes themes ('Risk', the skull) without alienating readers looking for the humor and emotional honesty mentioned in the review quote. The design had to be unique and intriguing, promising a character-driven story that defies a single genre classification.",
-    "solution": "The solution lies in the use of contrast and clever symbolism. The grim imagery of the skull is offset by the playful, oversized mustache, immediately suggesting a dark comedy. The stark, grungy background is enlivened by the energetic splash of pink in the title, adding a modern, punk-rock sensibility. This juxtaposition of dark and playful elements creates a balanced visual identity that accurately reflects the book's multifaceted narrative.",
-    "results": [
-      "A visually arresting cover that stands out on both physical and digital bookshelves.",
-      "The design successfully communicates the book's unique blend of genres, attracting the appropriate target audience.",
-      "Creation of a strong, memorable icon that serves as a brand for the book and its protagonist.",
-      "The layout effectively incorporates the celebrity endorsement, adding credibility and intrigue."
-    ],
-    "images": [
-      "/uploads/branding/7-risk.jpg"
-    ],
-    "tags": [
-      "Book Cover Design",
-      "Branding",
-      "Graphic Design",
-      "Illustration",
-      "Typography",
-      "Publishing",
-      "Dark Comedy"
-    ],
-    "technologies": [
-      "Adobe Photoshop",
-      "Adobe Illustrator"
-    ],
-    "category": "branding",
-    "published": true
-  },
-  {
-    "title": "Sci-Fi Book Cover & Brand Identity for 'Detonation'",
-    "subtitle": "A minimalist and atmospheric cover design for a science fiction novel, creating a brand identity that evokes mystery, tension, and futuristic themes.",
-    "imageSrc": "/uploads/branding/10-detonation.jpg",
-    "description": "This project established the brand identity for the science fiction novel 'Detonation'. The design employs a minimalist and atmospheric approach to build a sense of suspense and mystery. The cover is dominated by a dark, deep-space background, creating a vast and ominous setting. The central visual—two mysterious, descending luminescent objects—serves as the primary focal point, sparking curiosity about their nature and intent. The clean, futuristic typography with wide tracking complements the sci-fi theme and reinforces the novel's modern, high-concept identity.",
-    "challenge": "The primary challenge was to create a cover for a book titled 'Detonation' that conveys suspense and action without resorting to a cliché explosion graphic. The goal was to capture the feeling of anticipation—the moments leading up to a critical event. Furthermore, the design needed to establish a unique and sophisticated identity that would stand out in the crowded science fiction market, appealing to readers of modern, concept-driven sci-fi.",
-    "solution": "Instead of depicting the detonation itself, the design focuses on the cause or precursor. The two glowing objects streaking downwards create a powerful sense of impending impact and consequence. This 'calm before the storm' approach generates more intrigue and suspense than a literal explosion would. A minimalist aesthetic with clean typography was chosen to give the novel a more literary and contemporary feel, positioning its brand for an audience that appreciates atmospheric, speculative fiction.",
-    "results": [
-      "A visually stunning cover that establishes a sophisticated brand for the author and the novel.",
-      "The design successfully signals the sci-fi genre while appealing to a modern readership.",
-      "The minimalist approach makes the cover highly effective as a small thumbnail in online stores.",
-      "The cover's mysterious nature generates significant intrigue, prompting potential readers to learn more about the story."
-    ],
-    "images": [
-      "/uploads/branding/10-detonation.jpg"
-    ],
-    "tags": [
-      "Branding",
-      "Book Cover Design",
-      "Science Fiction",
-      "Graphic Design",
-      "Minimalist Design",
-      "Typography",
-      "Publishing",
-      "Visual Identity"
-    ],
-    "technologies": [
-      "Adobe Photoshop",
-      "Adobe Illustrator"
-    ],
-    "category": "branding",
-    "published": true
-  },
-  {
-    "title": "Epic Sci-Fi Cover Branding for 'Paradox 2'",
-    "subtitle": "A sleek and atmospheric cover design for a German-language science fiction novel, building a brand identity that communicates vast scale and cosmic mystery.",
-    "imageSrc": "/uploads/branding/attachment_89728190.jpeg",
-    "description": "This project showcases the cover design and branding for 'Paradox 2: Jenseits der Ewigkeit,' a German-language science fiction novel by Phillip P. Peterson. The design establishes a powerful brand for the series by visualizing its epic scale. Layered celestial crescents create a disorienting, paradoxical sense of space, perfectly aligning with the book's title. A classic sci-fi color palette of deep space blues and glowing teal is used to create an atmospheric and futuristic mood. The clean, sans-serif typography ensures a modern feel and high legibility, branding the book as a sophisticated, high-concept space opera.",
-    "challenge": "A key challenge for this project was designing a cover for a sequel that felt both familiar to existing fans and compelling to new readers. The design needed to maintain brand consistency with the first book while escalating the sense of scale and stakes. The primary creative challenge was to visually interpret abstract concepts like 'paradox' and 'eternity' in a way that was both intriguing and immediately recognizable as epic science fiction.",
-    "solution": "The concept of 'paradox' is visualized through the impossible layering of planetary horizons. This creates a visually arresting image that is surreal and vast, prompting the viewer to question what they're seeing. By presumably using a consistent typographic style and color palette from the first installment, the cover maintains strong series branding while the evolving imagery suggests a story that is growing in scope and complexity.",
-    "results": [
-      "A cover that strengthens the series' brand identity and appeals to its established readership.",
-      "The design clearly communicates the epic sci-fi genre, attracting fans of space opera and hard sci-fi.",
-      "A visually consistent and professional look that reinforces the author's brand in the German book market.",
-      "The high-contrast, clean design is highly effective in both print and as a digital thumbnail for online retailers."
-    ],
-    "images": [
-      "/uploads/branding/attachment_89728190.jpeg"
-    ],
-    "tags": [
-      "Branding",
-      "Book Cover Design",
-      "Science Fiction",
-      "Space Opera",
-      "Graphic Design",
-      "Series Branding",
-      "Publishing"
-    ],
-    "technologies": [
-      "Adobe Photoshop",
-      "Adobe Illustrator"
-    ],
-    "category": "branding",
-    "published": true
-  },
-  {
-    "title": "Corporate Brand Identity & Business Card for BNH Tourism",
-    "subtitle": "A sophisticated and premium business card design that establishes a strong corporate identity for an international tourism and holiday company.",
-    "imageSrc": "/uploads/branding/1.jpg",
-    "description": "This project involved the creation of a corporate brand identity for BNH Tourism and Holiday, encapsulated in a premium business card design. The design leverages a sophisticated color palette of black, silver, and gold to project an image of luxury, trust, and professionalism. A key feature is the use of a textured, brushed silver finish, which adds a tactile quality and enhances the card's perceived value. The dynamic wave element provides a modern, fluid aesthetic, elegantly organizing information and reinforcing the brand's identity as a leader in international travel.",
-    "challenge": "The primary challenge was to design a business card that instantly conveys the premium, trustworthy nature of BNH Tourism. The card needed to serve as a powerful first impression for a brand operating in the competitive luxury travel market. A further challenge was to elegantly organize a significant amount of contact information for two international offices (Egypt and UAE) without compromising the clean, high-end aesthetic.",
-    "solution": "A two-sided design was utilized to separate branding from information. To convey a premium feel, the front of the card features the company's elegant logo on a clean, textured silver background. The reverse side uses a clear typographic hierarchy on a black base to present contact details logically. The founder's name is highlighted in gold, and information is grouped by location. The wave element acts as a visual guide, leading the eye through the details in a structured and aesthetically pleasing manner.",
-    "results": [
-      "A tangible branding tool that leaves a lasting, high-quality impression on potential clients and partners.",
-      "Strengthened brand identity that aligns with the company's positioning in the luxury tourism sector.",
-      "A clear and effective communication tool that provides all necessary contact information in an organized format.",
-      "Positive feedback from the client on the design's professionalism and modern aesthetic."
-    ],
-    "images": [
-      "/uploads/branding/1.jpg"
-    ],
-    "tags": [
-      "Branding",
-      "Corporate Identity",
-      "Business Card Design",
-      "Graphic Design",
-      "Print Design",
-      "Luxury Branding",
-      "Tourism"
-    ],
-    "technologies": [
-      "Adobe Illustrator",
-      "Adobe Photoshop"
-    ],
-    "category": "branding",
-    "published": true
-  },
-  {
-    "title": "Fresh Brand Identity & Business Card for Hydrofit",
-    "subtitle": "A clean and modern business card design that establishes a clear brand identity for a company focused on pure water and healthy living.",
-    "imageSrc": "/uploads/branding/3.jpg",
-    "description": "This project showcases the development of a fresh brand identity for Hydrofit, a company dedicated to providing 'Pure Water For Life.' The business card design utilizes a clean and vibrant color palette of blue, green, and white to evoke feelings of health, nature, and purity. The brand's circular logo, featuring a central water droplet embraced by green leaves, is prominently displayed. A modern, curved layout separates the logo from the contact details, creating a dynamic visual flow and reinforcing the brand's forward-thinking and approachable identity.",
-    "challenge": "The primary challenge was to create a brand identity that instantly conveys trust and purity, which is critical for a company in the water and wellness industry. The design needed to look professional and reliable, assuring customers of the product's quality. Another challenge was to create a visually distinct and memorable look that would differentiate Hydrofit in a competitive marketplace.",
-    "solution": "The solution was to use a clean design aesthetic and a color palette universally associated with cleanliness (blue, white) and nature (green). The professional, well-structured layout and clear typography project an image of reliability and expertise. The dynamic, curved element in the layout offers a unique visual signature that is more engaging than a standard rectangular design, creating a memorable brand identity that feels both trustworthy and modern.",
-    "results": [
-      "A professional business card that effectively builds brand trust upon first impression.",
-      "A clear, memorable brand identity that resonates with a health-conscious target audience.",
-      "A versatile and scalable design that can be easily applied across other marketing materials like websites, packaging, and social media.",
-      "Positive reception for its clean, modern, and trustworthy aesthetic."
-    ],
-    "images": [
-      "/uploads/branding/3.jpg"
-    ],
-    "tags": [
-      "Branding",
-      "Business Card Design",
-      "Corporate Identity",
-      "Logo Design",
-      "Graphic Design",
-      "Health & Wellness",
-      "Eco-Friendly Branding"
-    ],
-    "technologies": [
-      "Adobe Illustrator",
-      "Adobe Photoshop"
-    ],
-    "category": "branding",
-    "published": true
-  },
-  {
-    "title": "Playful & Vibrant Brand Identity for Dees Toys",
-    "subtitle": "A cheerful and kid-friendly business card design that creates a memorable and fun brand identity for a toy company.",
-    "imageSrc": "/uploads/branding/4.jpg",
-    "description": "This branding project involved creating a vibrant and playful identity for Dees Toys. The business card design is centered around a fun, custom logo with bubbly typography and cheerful colors. The bright palette of green, orange, and cyan immediately captures a sense of joy and energy, perfectly suited for the toy industry. Whimsical shapes and simple floral icons adorn the corners, adding a decorative touch without overwhelming the clean, white background. The overall design establishes a friendly, approachable, and memorable brand that appeals directly to children and parents alike.",
-    "challenge": "The primary challenge in branding a toy company is designing for a dual audience: the branding must be visually exciting and engaging for children, while also appearing professional, safe, and trustworthy to the parents making the purchasing decisions. The design needed to balance playful creativity with the clarity and professionalism required to build consumer confidence.",
-    "solution": "The solution was to combine a highly playful and colorful logo with a clean and organized layout. The logo and graphic elements are aimed at capturing a child's imagination, using rounded shapes and a vibrant color scheme. The use of a clean white background and a simple, legible sans-serif font for the contact information ensures the card looks professional and is easy for parents to read, creating a perfect balance of fun and function.",
-    "results": [
-      "A strong brand identity that stands out in the competitive toy market.",
-      "A business card that effectively communicates the brand's fun and friendly personality on first contact.",
-      "Positive brand association with creativity, joy, and trustworthiness.",
-      "A versatile branding system (logo, colors, graphic elements) that can be easily applied to product packaging, marketing materials, and digital platforms."
-    ],
-    "images": [
-      "/uploads/branding/4.jpg"
-    ],
-    "tags": [
-      "Branding",
-      "Logo Design",
-      "Business Card Design",
-      "Children's Brand",
-      "Toy Company",
-      "Graphic Design",
-      "Playful Design",
-      "Corporate Identity"
-    ],
-    "technologies": [
-      "Adobe Illustrator",
-      "Adobe Photoshop"
-    ],
-    "category": "branding",
-    "published": true
-  }
+  "title": "Modern & Professional Brand Identity for Cannamart",
+  "subtitle": "A clean and strategic business card design for a cannabis-industry brand, combining corporate professionalism with direct-to-consumer marketing.",
+  "imageSrc": "5.jpg",
+  "description": "This branding project for Cannamart, a modern cannabis-industry business, features a business card with a unique dual purpose. The design employs a clean, geometric layout and a fresh green and grey color palette to establish a professional and trustworthy brand image, consciously moving away from outdated industry stereotypes. The front of the card serves as a traditional networking tool with clear, organized contact information. The reverse side functions as a direct marketing piece, featuring a promotional offer to drive customer engagement and acquisition.",
+  "challenge": "The primary challenge was to develop a brand identity for a cannabis company that projects professionalism and trust, helping to legitimize the business in a rapidly evolving market. The design needed to be approachable and modern, avoiding clichés to appeal to a wide demographic. A specific design challenge was to create a two-sided card that successfully functions as both a corporate networking tool and a compelling consumer-facing advertisement.",
+  "solution": "A minimalist and corporate-inspired design language was adopted. The clean lines, geometric logo, and professional sans-serif typography position Cannamart as a modern wellness or retail brand. To address the dual-function requirement, a clear separation of purpose was established: the front is strictly for professional contact information, while the back is a visually engaging promotional tool. Brand consistency in color and logo usage ensures both sides feel cohesive.",
+  "results": [
+    "A successful brand identity that positions Cannamart as a modern, trustworthy leader in the cannabis retail space.",
+    "A multi-functional marketing tool that serves both B2B networking and B2C promotional needs.",
+    "Increased customer acquisition and brand engagement through the tangible call-to-action on the card.",
+    "Positive reception from a broad audience due to the professional and approachable design."
+  ],
+  "images": [
+    "5.jpg"
+  ],
+  "tags": [
+    "Branding",
+    "Business Card Design",
+    "Corporate Identity",
+    "Cannabis Branding",
+    "Marketing Collateral",
+    "Graphic Design",
+    "Retail Branding"
+  ],
+  "technologies": [
+    "Adobe Illustrator",
+    "Adobe Photoshop"
+  ],
+  "category": "Branding",
+  "published": true
+},
+{
+  "title": "Modern Corporate Brand Identity for Centurion Solutions LTD",
+  "subtitle": "A comprehensive branding package including a business card and letterhead, designed to establish a strong, professional, and modern identity for a solutions-based company.",
+  "imageSrc": "6.jpg",
+  "description": "This project involved the development of a complete corporate brand identity for Centurion Solutions LTD, showcased through a modern business card and professional letterhead. The identity is anchored by a strong, dynamic logo featuring a stylized 'C' that evokes a gear or cog, symbolizing precision, technology, and integrated solutions. A powerful color palette of black, white, and red is used throughout the stationery to convey professionalism and energy. These elements are applied consistently to create a cohesive and impactful corporate image, reinforced by details like the subtle watermark on the letterhead.",
+  "challenge": "The core challenge was to create a brand identity that projects a high level of professionalism and trustworthiness, essential for a B2B company like 'Centurion Solutions'. The branding needed to be strong and memorable, effectively communicating expertise and reliability. The project also required the development of a cohesive branding system, not just a single design, that could be applied consistently across different corporate materials to build brand recognition.",
+  "solution": "A clean, modern aesthetic was established using a strong, corporate color palette and sans-serif typography. The logo, with its gear-like motif, directly communicates a sense of engineering and problem-solving. This high-impact design builds immediate credibility. A versatile branding system was created, allowing the full logo, the iconic 'C' graphic, and the color palette to be used in different configurations across the stationery, ensuring a unified and professional brand experience.",
+  "results": [
+    "A cohesive and professional brand identity that elevates the company's corporate image.",
+    "A full set of ready-to-use stationery that ensures brand consistency in all official communications.",
+    "The strong, modern branding helps differentiate Centurion Solutions in a competitive B2B marketplace.",
+    "A flexible branding system that can be easily extended to a website, presentations, and other marketing collateral."
+  ],
+  "images": [
+    "6.jpg"
+  ],
+  "tags": [
+    "Branding",
+    "Corporate Identity",
+    "Stationery Design",
+    "Business Card Design",
+    "Letterhead Design",
+    "Logo Design",
+    "Graphic Design",
+    "B2B Branding"
+  ],
+  "technologies": [
+    "Adobe Illustrator",
+    "Adobe Photoshop"
+  ],
+  "category": "Branding",
+  "published": true
+},
+{
+  "title": "Global Logistics Brand Identity for TAES",
+  "subtitle": "A complete corporate branding suite for a Mauritius-based transport and general services company, featuring a dynamic logo, letterhead, and business card design.",
+  "imageSrc": "8.jpg",
+  "description": "This project involved creating a full corporate brand identity for TAES (Transportment & General Services Co Ltd), a logistics company based in Mauritius. The core of the identity is a dynamic logo that encapsulates the company's global reach, featuring a stylized globe with integrated air and sea freight symbols. A professional color palette of bright cyan, grey, and white was chosen to convey efficiency, reliability, and trust. This branding system was applied across a suite of corporate stationery, including a modern business card and a clean letterhead, to ensure a cohesive and professional image in all business communications.",
+  "challenge": "The main challenge was to create a brand identity that visually communicates the full scope of TAES's services—encompassing global air, sea, and land transport. The branding needed to be dynamic and modern while projecting an unwavering sense of trust and reliability, which is the most critical attribute in the logistics industry. The design had to look professional enough to compete on an international stage.",
+  "solution": "The solution was to create a comprehensive logo that acts as a visual summary of the company's services. The globe element immediately signals international operations, while the clear icons for a plane and ship explicitly define the modes of transport. A clean, structured, and modern design aesthetic was used across all materials, with a professional color scheme and clear typography to create an impression of efficiency and dependability, positioning TAES as a serious and capable logistics partner.",
+  "results": [
+    "A strong, professional brand identity that clearly communicates the company's services and global reach.",
+    "A complete set of corporate stationery that enhances brand recognition and professionalism in client communications.",
+    "The modern branding helps TAES stand out in the competitive logistics market in Mauritius and internationally.",
+    "Increased client confidence due to the trustworthy and reliable visual identity."
+  ],
+  "images": [
+    "8.jpg"
+  ],
+  "tags": [
+    "Branding",
+    "Corporate Identity",
+    "Logistics Branding",
+    "Stationery Design",
+    "Logo Design",
+    "Graphic Design",
+    "B2B Branding",
+    "Transport"
+  ],
+  "technologies": [
+    "Adobe Illustrator",
+    "Adobe Photoshop"
+  ],
+  "category": "Branding",
+  "published": true
+},{
+  "title": "Premium Corporate Brand Identity for Leading Way",
+  "subtitle": "A sophisticated and modern business card design for an expert consultancy, using a strong color palette and geometric layout to convey leadership and expertise.",
+  "imageSrc": "9.jpg",
+  "description": "This branding project for 'Leading Way' was focused on creating a sophisticated and authoritative corporate identity. The business card design utilizes a premium color palette of dark charcoal and muted gold to establish a sense of expertise and value. The brand's identity is centered on a strong typographic logo and a recurring 'dot-path' motif that cleverly visualizes the company's name. Dynamic, geometric shapes and a clean layout create a modern and confident aesthetic, perfectly aligning with the tagline, 'Trust The Experts.'",
+  "challenge": "The primary challenge was to create a brand identity that visually communicates 'leadership' and 'expertise' in a way that feels authentic and compelling. In a market where many competitors make similar claims, the design needed to stand out and instantly project confidence and authority. The branding also needed to strike a balance between being modern and dynamic, and being timeless and trustworthy, befitting an expert consultancy.",
+  "solution": "The solution was to use a design language associated with premium, high-value services. The sophisticated color palette, strong typography, and confident layout all contribute to an aura of professionalism. The clever dot-path logo adds a layer of intelligence and strategic thinking to the brand, visually substantiating the 'expert' claim. The use of classic geometric shapes provides a timeless foundation, while the dynamic, asymmetric layout gives it a contemporary edge.",
+  "results": [
+    "A powerful brand identity that effectively positions Leading Way as a premium, expert service provider.",
+    "A business card that serves as a memorable and impressive networking tool, reinforcing the company's value proposition.",
+    "The strong visual branding helps to build client trust and confidence from the first point of contact.",
+    "A flexible design system (logo, colors, motifs) that can be easily applied to other corporate materials like a website or company profile."
+  ],
+  "images": [
+    "9.jpg"
+  ],
+  "tags": [
+    "Branding",
+    "Corporate Identity",
+    "Business Card Design",
+    "Premium Branding",
+    "Consulting",
+    "Professional Services",
+    "Graphic Design",
+    "Logo Design"
+  ],
+  "technologies": [
+    "Adobe Illustrator",
+    "Adobe Photoshop"
+  ],
+  "category": "Branding",
+  "published": true
+},{
+  "title": "Elegant & Modern Brand Identity for Nail Lovers Salon",
+  "subtitle": "A chic business card design for an upscale nail salon, using a sophisticated color palette and minimalist logo to create a serene and professional brand image.",
+  "imageSrc": "10.jpg",
+  "description": "This branding project for Nail Lovers, a modern nail art salon, was designed to create a chic and sophisticated brand identity. The business card features an elegant, minimalist logo with a stylish 'NL' monogram that suggests artistry and a personal touch. A serene color palette of dusty blue, grey, and white was chosen to evoke a sense of calm and luxury. The design is accented with layered, abstract geometric shapes, adding a contemporary flair while maintaining a clean and organized layout. The overall identity positions Nail Lovers as a professional, upscale destination for nail care.",
+  "challenge": "The primary challenge was to create a brand identity that would allow Nail Lovers to stand out in a competitive local beauty market. The branding needed to attract a discerning clientele by visually communicating a higher standard of service, elegance, and cleanliness. It had to be sophisticated enough to justify its services while remaining approachable.",
+  "solution": "Instead of using common salon tropes like overly bright colors or ornate fonts, the solution was to adopt a more refined and modern aesthetic. The unique, muted color palette and clean, geometric accents create a memorable and upscale look that differentiates Nail Lovers. The minimalist design, with its ample light space and well-organized typography, projects an image of professionalism and hygiene, subconsciously assuring clients of a high-quality, premium experience.",
+  "results": [
+    "A strong brand identity that successfully attracts the salon's target demographic of style-conscious clients.",
+    "A professional business card that doubles as a mini-menu of services, providing value to potential customers.",
+    "The elegant branding helps build a reputation for quality and justifies a premium positioning in the local market.",
+    "A versatile and modern identity that can be easily applied to the salon's interior design, website, and social media presence."
+  ],
+  "images": [
+    "10.jpg"
+  ],
+  "tags": [
+    "Branding",
+    "Business Card Design",
+    "Beauty Salon",
+    "Nail Art",
+    "Corporate Identity",
+    "Logo Design",
+    "Graphic Design",
+    "Elegant Design"
+  ],
+  "technologies": [
+    "Adobe Illustrator",
+    "Adobe Photoshop"
+  ],
+  "category": "Branding",
+  "published": true
+},{
+  "title": "Briefcase.com: Premier E-commerce Destination for Bags & Cases",
+  "subtitle": "A comprehensive web design and development project for a leading online retailer specializing in high-quality briefcases, backpacks, and luggage since 1998.",
+  "imageSrc": "breifcase.com 1.jpg",
+  "description": "This project involved the design and development of a large-scale e-commerce website for Briefcase.com, an established retailer of bags and travel gear. The platform is designed to handle a vast inventory from numerous high-end brands like Pratt Leather Co. and Jack Georges. The user experience is centered around a classic, professional aesthetic, with a structured layout that facilitates easy browsing. Key features include a dynamic homepage with featured products and brands, a multi-level navigation menu, and a detailed category page with robust filtering and sorting options.",
+  "challenge": "The main challenge was to organize a massive and diverse product catalog into an intuitive and user-friendly shopping experience. The site architecture needed to allow customers to easily browse by category, brand, or specific product type without feeling overwhelmed. Another key challenge was to create a design that felt both modern and timeless, reflecting the company's long-standing reputation (since 1998) while providing a seamless, contemporary e-commerce experience.",
+  "solution": "A robust e-commerce platform was utilized to manage the extensive inventory. The user interface was designed with a clear, hierarchical structure, featuring a detailed navigation bar and a prominent sidebar for filtering on category pages. This allows users to quickly narrow down their choices. The homepage was strategically designed to showcase best-sellers, deals, and featured brands, guiding users to popular sections of the site. A clean, professional design with a blue and grey color scheme reinforces the brand's trustworthiness and long-standing market presence.",
+  "results": [
+    "A scalable and high-performance e-commerce website capable of managing thousands of products from various brands.",
+    "An intuitive user interface that significantly improves product discovery and streamlines the customer journey.",
+    "Successfully blended a classic, trustworthy brand image with modern e-commerce functionalities.",
+    "A comprehensive platform that provides the client with full control over inventory, sales, and content management."
+  ],
+  "images": [
+    "breifcase.com 1.jpg",
+    "category-page-2.jpg"
+  ],
+  "tags": [
+    "Web Design",
+    "Web Development",
+    "E-commerce",
+    "UI/UX Design",
+    "Retail Website",
+    "Magento",
+    "Large Inventory",
+    "Information Architecture"
+  ],
+  "technologies": [
+    "HTML5",
+    "CSS3",
+    "JavaScript",
+    "PHP",
+    "Magento",
+    "MySQL"
+  ],
+  "category": "Web Design & Development",
+  "published": true
+},{
+  "title": "Elegant E-commerce Experience for 'My Bottle' Beverage Retailer",
+  "subtitle": "A sophisticated and minimalist web design for a premium online liquor store, focusing on high-end product presentation and a luxurious user experience.",
+  "imageSrc": "chinese my bottle making company.jpg",
+  "description": "This project involved the design and development of a bespoke e-commerce platform for 'My Bottle,' a premium French online retailer of spirits and champagnes. The website's design is intentionally minimalist and elegant, utilizing a generous amount of white space, sophisticated typography, and stunning lifestyle photography to create a luxury brand experience. The user journey is crafted to feel like browsing a high-end boutique, with curated collections and brand spotlights. The platform showcases products in clean, organized grids, emphasizing the quality of each item and providing a seamless and visually pleasing shopping experience.",
+  "challenge": "The primary challenge was to create an online shopping experience that felt as luxurious and exclusive as the premium beverages on offer. The design needed to strike a perfect balance between a high-fashion, editorial aesthetic and the core functionalities of an efficient e-commerce platform. The goal was to build a sophisticated digital atmosphere that would appeal to a discerning clientele and elevate the perceived value of the products.",
+  "solution": "The solution was to build the site on a clean, grid-based layout. This provides an underlying structure and ensures usability, while the content within the grid—large images, elegant fonts, and ample white space—delivers the aesthetic appeal. A minimalist color palette of primarily black and white was used to let the high-quality photography stand out. This deliberate, restrained design approach results in a sophisticated and premium user experience that is both beautiful and easy to navigate.",
+  "results": [
+    "A high-end e-commerce platform that successfully positions 'My Bottle' as a leader in the premium beverage market.",
+    "Increased user engagement and longer session durations due to the visually appealing, browsing-focused design.",
+    "A higher conversion rate for high-value items, supported by the trustworthy and luxurious brand presentation.",
+    "A strong and memorable brand identity that differentiates the store from mass-market competitors."
+  ],
+  "images": [
+    "chinese my bottle making company.jpg"
+  ],
+  "tags": [
+    "Web Design",
+    "Web Development",
+    "E-commerce",
+    "Luxury Branding",
+    "Minimalist Design",
+    "UI/UX",
+    "Shopify",
+    "Beverage Industry"
+  ],
+  "technologies": [
+    "HTML5",
+    "CSS3",
+    "JavaScript",
+    "Shopify",
+    "Liquid"
+  ],
+  "category": "Web Design & Development",
+  "published": true
+},{
+  "title": "E-commerce Platform for 'Intizar' - South Asian Fashion",
+  "subtitle": "A clean and minimalist web design for a fashion e-commerce brand specializing in Pakistani and Indian ethnic wear, designed to showcase a vibrant and diverse product catalog.",
+  "imageSrc": "fashion ecommerce web.jpg",
+  "description": "This project was the end-to-end design and development of an e-commerce platform for Intizar, a fashion brand specializing in South Asian ethnic wear for women. The website features a clean, minimalist design with a strong emphasis on a white background. This was a deliberate choice to allow the vibrant colors and intricate patterns of the products—such as kurtis, dupattas, and traditional bags—to be the primary focus. The platform is structured with clear product categories and a user-friendly grid layout, enabling customers to easily browse a large and diverse inventory. The overall experience is designed to be simple, elegant, and shopping-focused, catering to a modern audience with an appreciation for traditional fashion.",
+  "challenge": "The primary challenge was to create a design that could elegantly showcase a large and visually diverse catalog of colorful ethnic wear without appearing cluttered. The platform needed to provide a calm, clean backdrop that would make the products themselves the heroes. Another challenge was to create a modern digital storefront that appeals to a contemporary online shopper while still honoring the traditional nature of many of the products, bridging the gap between cultural heritage and modern e-commerce.",
+  "solution": "The solution was to implement a minimalist, grid-based design with a strict adherence to a neutral (primarily white) color palette for the user interface. This creates a gallery-like feel, where each product is framed neatly. Ample spacing between items in the grid prevents visual clutter and allows each design to be appreciated individually. The use of modern typography and an intuitive e-commerce layout ensures the shopping experience is efficient, while the high-quality product photography is left to convey the brand's cultural richness.",
+  "results": [
+    "A scalable e-commerce platform that effectively manages and displays a large, diverse fashion inventory.",
+    "An enhanced shopping experience that leads to higher customer engagement and conversion rates.",
+    "A strong brand identity that positions Intizar as a clean, modern destination for South Asian fashion.",
+    "Positive feedback from customers on the site's easy navigation and visually appealing product presentation."
+  ],
+  "images": [
+    "fashion ecommerce web.jpg"
+  ],
+  "tags": [
+    "Web Design",
+    "Web Development",
+    "E-commerce",
+    "Fashion Website",
+    "Ethnic Wear",
+    "Pakistani Fashion",
+    "UI/UX",
+    "Shopify",
+    "Minimalist Design"
+  ],
+  "technologies": [
+    "HTML5",
+    "CSS3",
+    "JavaScript",
+    "Shopify",
+    "Liquid"
+  ],
+  "category": "Web Design & Development",
+  "published": true
+},{
+  "title": "Vibrant & Engaging E-commerce Website for Ocyanas Perfumery",
+  "subtitle": "A dynamic and colorful web design for an online fragrance retailer, crafted to appeal to a modern, fashion-forward audience with a focus on visual storytelling and user engagement.",
+  "imageSrc": "screencapture-ocyanas-2021-09-14-20_05_16.jpg",
+  "description": "This project involved the design and development of a vibrant e-commerce platform for an online perfume and fragrance retailer, targeting a modern East Asian audience. The website features a bold and energetic design, utilizing a vivid color palette of turquoise and pink to create a lively and engaging shopping atmosphere. The homepage is strategically structured to build trust with 'Top Promises,' drive sales with clear promotions, and showcase a wide range of popular designer brands. A unique feature of the site is its focus on content marketing, with visually rich sections like the 'Overview of Fragrance Longevity' designed to educate and empower customers.",
+  "challenge": "The primary challenge was to create a distinct and memorable brand identity for the retailer itself, while selling products from globally recognized luxury brands. The website needed its own personality to avoid feeling like a generic reseller. Another significant challenge was to present complex product information (like fragrance notes and longevity) in a visually appealing and easily digestible format to help guide customers in their purchasing decisions.",
+  "solution": "The solution was to develop a unique and vibrant visual language for the brand. The bold color scheme, consistent use of modern typography, and playful graphic style create a strong, youthful brand personality that is distinct from the classic aesthetics of the luxury brands it sells. To simplify complex information, we designed custom infographics and visually engaging content blocks. This content marketing approach not only educates the consumer but also builds brand authority and trust, positioning the retailer as an expert in the field.",
+  "results": [
+    "A successful e-commerce platform with a strong, unique brand identity that resonates with a young, modern demographic.",
+    "Increased customer engagement and time-on-site due to the rich visual content and educational guides.",
+    "Higher conversion rates driven by clear calls-to-action and a trustworthy presentation of popular brands.",
+    "Established the site as an authoritative and fun destination for fragrance shopping, not just a simple reseller."
+  ],
+  "images": [
+    "screencapture-ocyanas-2021-09-14-20_05_16.jpg"
+  ],
+  "tags": [
+    "Web Design",
+    "Web Development",
+    "E-commerce",
+    "UI/UX",
+    "Perfume",
+    "Retail Website",
+    "Content Marketing",
+    "Vibrant Design"
+  ],
+  "technologies": [
+    "HTML5",
+    "CSS3",
+    "JavaScript",
+    "Shopify",
+    "Magento"
+  ],
+  "category": "Web Design & Development",
+  "published": true
+},{
+  "title": "B2B Service Platform for Alchemy Clothing Company",
+  "subtitle": "A professional and informative website for an Indian-based apparel sourcing and manufacturing partner, designed to attract fashion brands and showcase end-to-end production capabilities.",
+  "imageSrc": "screenshot-alchemyclothing-in-1612602768823.jpg",
+  "description": "This project was the design and development of a comprehensive B2B service website for Alchemy Clothing Company, an apparel manufacturing partner based in India. The website is strategically designed to build trust and generate leads from fashion brands. Its clean, professional aesthetic utilizes a muted color palette and a well-structured layout to convey reliability and expertise. The homepage guides potential clients through a clear value proposition, from a detailed breakdown of their end-to-end services like design development and logistics, to powerful social proof in the form of client logos and testimonials. The entire user journey is optimized to encourage inquiries and partnerships.",
+  "challenge": "The primary challenge was to build a digital presence that immediately establishes a high degree of trust and credibility. As a B2B manufacturing partner, Alchemy Clothing Company's website needed to convince potential clients—often established or emerging fashion brands—of their expertise and reliability. A further challenge was to clearly and concisely communicate a complex, multi-step service offering, making it easy for visitors to understand the full scope of their capabilities.",
+  "solution": "Trust was built through a clean, polished, and professional design. The site heavily features social proof: a 'Brands We've Worked With' section and a prominent block of client testimonials. This third-party validation is crucial for a B2B service and was made a central part of the homepage. The complex services were broken down into a clear, visual grid, with each service having its own dedicated block with a simple image and a concise description. This modular approach makes the information digestible and allows potential clients to easily identify the services they need.",
+  "results": [
+    "A professional website that serves as a powerful 24/7 lead generation tool for the business.",
+    "A clear and effective presentation of services that reduces unqualified inquiries and improves the quality of prospective clients.",
+    "Enhanced brand credibility and positioning as a leading apparel manufacturing partner in the region.",
+    "A user-friendly experience that guides potential partners seamlessly from discovery to contact."
+  ],
+  "images": [
+    "screenshot-alchemyclothing-in-1612602768823.jpg"
+  ],
+  "tags": [
+    "Web Design",
+    "Web Development",
+    "B2B Website",
+    "Lead Generation",
+    "Corporate Website",
+    "UI/UX",
+    "Apparel Manufacturing",
+    "Service Website",
+    "WordPress"
+  ],
+  "technologies": [
+    "HTML5",
+    "CSS3",
+    "JavaScript",
+    "WordPress",
+    "PHP"
+  ],
+  "category": "Web Design & Development",
+  "published": true
+},{
+  "title": "Clean & Modern E-commerce Website for The Digital Outlet",
+  "subtitle": "A sleek and user-friendly web design for an online electronics retailer, focusing on a clean aesthetic, intuitive navigation, and a trustworthy shopping experience.",
+  "imageSrc": "thedigitaloutlet-portfolio.png",
+  "description": "This project involved the complete design and development of a modern e-commerce platform for The Digital Outlet, a retailer specializing in the latest consumer tech and electronics. The website's design is clean, professional, and highly organized, using a minimalist color palette of dark blue, white, and grey to create a sophisticated, tech-focused feel. The homepage is designed to build immediate customer trust with clear service promises (Free Delivery, 14-Day Return), and it effectively showcases new products and popular categories. The entire user interface is crafted to be intuitive and user-friendly, ensuring a seamless journey from product discovery to checkout.",
+  "challenge": "The primary challenge was to design an e-commerce platform for a tech retailer that feels as modern and high-quality as the products being sold. In a competitive electronics market, the website needed to project a strong sense of trust and security to encourage online transactions. Another key challenge was to organize a potentially large and varied product catalog in a way that is easy for users to navigate, whether they are browsing categories or searching for a specific item.",
+  "solution": "A clean, grid-based layout was implemented to create a sense of order and professionalism. A clear visual hierarchy guides the user's eye from the main promotional banner to key categories and featured products. Trust is established through the prominent display of security and service guarantees. The navigation is straightforward, with a clear search bar and a 'Shop by Category' dropdown, ensuring that users can find what they are looking for with minimal effort. The overall aesthetic is polished and professional, positioning The Digital Outlet as a reliable source for consumer electronics.",
+  "results": [
+    "A professional and trustworthy e-commerce platform that enhances brand credibility.",
+    "A highly intuitive user interface that simplifies the shopping process, leading to increased conversion rates.",
+    "A scalable design that can easily accommodate a growing inventory of tech products.",
+    "A strong online presence that effectively competes in the crowded electronics retail market."
+  ],
+  "images": [
+    "thedigitaloutlet-portfolio.png"
+  ],
+  "tags": [
+    "Web Design",
+    "Web Development",
+    "E-commerce",
+    "Electronics Store",
+    "UI/UX Design",
+    "Shopify",
+    "WooCommerce",
+    "Tech Retail"
+  ],
+  "technologies": [
+    "HTML5",
+    "CSS3",
+    "JavaScript",
+    "Shopify",
+    "WooCommerce",
+    "PHP"
+  ],
+  "category": "Web Design & Development",
+  "published": true
+},{
+  "title": "Urban Necessities: E-commerce Hub for Streetwear & Sneakers",
+  "subtitle": "A clean, minimalist, and product-focused e-commerce website for a leading sneaker and streetwear consignment store, designed to appeal to the modern hype culture enthusiast.",
+  "imageSrc": "urbannecessities-portfolio.jpg",
+  "description": "This project involved the design and development of the e-commerce platform for Urban Necessities, a premier destination for collectible sneakers and exclusive streetwear. The website's design is intentionally clean and minimalist, using a bright, airy aesthetic with a white background and a simple layout. This approach ensures that the high-value products, such as sought-after sneakers from Nike, Yeezy, and Air Jordan, are the undisputed heroes. The platform is structured to sell both the store's own branded merchandise (UN Merch) and a curated selection of consignment items from top-tier brands, blending a brand store with a marketplace.",
+  "challenge": "The primary challenge was to create a digital storefront that reflects the brand's cool, credible, and authentic position within streetwear culture. The website needed to feel premium and trustworthy to justify the high price point of its products. Functionally, the site had to seamlessly integrate the sale of its own merchandise with a constantly changing inventory of consignment items, requiring a flexible and robust e-commerce backend.",
+  "solution": "A minimalist, content-first design approach was implemented. By stripping back unnecessary design elements, the focus is placed squarely on high-quality product photography. A clean, grid-based layout for product listings and a simple, intuitive navigation system make browsing effortless. The branding is subtle but consistent, using the company's circular logo as a watermark and in the header to build brand recognition without distracting from the products. This clean, almost gallery-like aesthetic elevates the brand and the products it sells.",
+  "results": [
+    "A sophisticated and clean e-commerce platform that reinforces the brand's authority in the streetwear market.",
+    "An enhanced user experience that simplifies the process of browsing and purchasing high-value, collectible items.",
+    "A flexible platform that successfully supports a dual-inventory model of first-party merchandise and consignment goods.",
+    "Increased customer trust and higher conversion rates due to the professional, secure, and product-focused design."
+  ],
+  "images": [
+    "urbannecessities-portfolio.jpg"
+  ],
+  "tags": [
+    "Web Design",
+    "Web Development",
+    "E-commerce",
+    "Streetwear",
+    "Sneakers",
+    "Shopify",
+    "UI/UX",
+    "Minimalist Design",
+    "Hype Culture"
+  ],
+  "technologies": [
+    "HTML5",
+    "CSS3",
+    "JavaScript",
+    "Shopify",
+    "Liquid"
+  ],
+  "category": "Web Design & Development",
+  "published": true
+},{
+  "title": "Spooky & Festive Halloween Event Flyer",
+  "subtitle": "A vibrant and thematic flyer designed to promote a corporate Halloween dress-up event, using classic spooky elements to generate excitement.",
+  "imageSrc": "1.jpg",
+  "description": "This project involved the design of a festive flyer for a corporate 'Spooktacular Halloween Dress Up' event. The design leverages a classic Halloween aesthetic, incorporating iconic imagery such as jack-o'-lanterns, a haunted house, and bats to create an instantly recognizable and exciting theme. A vibrant, high-contrast color palette of orange and black was used to capture attention. The typography combines a spooky, thematic headline font with clean, legible text for the event details, ensuring the flyer is both fun to look at and easy to read. The layout is strategically organized to highlight key information like the date, location, and a 'Best Dressed Prize' to maximize employee engagement and attendance.",
+  "challenge": "The main challenge was to create a design that perfectly balances festive, spooky fun with clear, concise information. The flyer needed to be eye-catching and generate excitement for the Halloween event, while ensuring that all essential details—date, time, location, and RSVP contact—were presented in a highly legible and organized manner. The design had to feel custom and polished while using familiar Halloween iconography.",
+  "solution": "A strong visual hierarchy was established. The fun, thematic elements are concentrated in the header and as a border, creating an exciting frame. The core of the flyer dedicates clean, organized space for the text. Different font styles and sizes are used to distinguish between the headline, key details, and descriptive text, guiding the reader's eye logically through the information. High-quality, cohesive illustrations are integrated into a layered design, creating a sense of depth and a professional finish.",
+  "results": [
+    "An eye-catching flyer that successfully promoted the event and boosted employee participation.",
+    "Clear communication of all event details, leading to a smooth RSVP process.",
+    "Positive feedback on the fun and professional design, contributing to a positive company culture."
+  ],
+  "images": [],
+  "tags": [
+    "Graphic Design",
+    "Flyer Design",
+    "Event Promotion",
+    "Print Design",
+    "Halloween",
+    "Corporate Events",
+    "Illustration"
+  ],
+  "technologies": [
+    "Adobe Illustrator",
+    "Adobe Photoshop"
+  ],
+  "category": "Graphic Design",
+  "published": true
+},{
+  "title": "Dynamic New Employee Welcome Poster",
+  "subtitle": "A vibrant and personalized graphic to celebrate and announce a new team member, designed to foster a welcoming and energetic company culture.",
+  "imageSrc": "2.jpg",
+  "description": "This graphic design project is a modern and dynamic welcome poster for a new employee, Karan Sharma. The design adopts a high-energy, celebratory aesthetic, featuring a dark background with vibrant neon lines and abstract light effects to make the announcement feel like a special event. The new team member's photograph is the central focus, professionally integrated into a glowing frame. A combination of an elegant script font for the name and a bold, impactful font for the 'WELCOME' message creates a stylish and clear visual hierarchy. The inclusion of the company's logo professionally brands the piece, reinforcing a positive and energetic company culture from day one.",
+  "challenge": "The main challenge was to create a design that was both highly celebratory and personalized for the new employee, while still maintaining a professional and branded look for the company (CBN). The design needed to be exciting without being informal or unprofessional. A further consideration was to create a concept that could be easily templated for future new hires, requiring a flexible layout that works with different names and photos.",
+  "solution": "The design achieves balance by using a dark, sophisticated background as a professional base, then layering it with energetic but abstract light effects. The prominent company logo at the top firmly anchors the design as an official piece of corporate communication. The layout is well-suited for a template, with a clearly defined circular space for the photo and distinct text blocks for the name, allowing for easy replacement of key elements for future announcements.",
+  "results": [
+    "A design that makes new employees feel valued and warmly welcomed from their first day.",
+    "Strengthened company culture by publicly celebrating new team members in a modern way.",
+    "A reusable and efficient template for HR or internal communications teams to use for onboarding.",
+    "Positive internal feedback on the engaging and professional approach to employee announcements."
+  ],
+  "images": [],
+  "tags": [
+    "Graphic Design",
+    "Poster Design",
+    "Corporate Communications",
+    "Employee Onboarding",
+    "Branding",
+    "Social Media Graphic"
+  ],
+  "technologies": [
+    "Adobe Photoshop",
+    "Adobe Illustrator"
+  ],
+  "category": "Graphic Design",
+  "published": true
+},{
+  "title": "Global Virtual Business Presentation Flyer",
+  "subtitle": "A professional and informative flyer designed for a CBN corporate event, targeting a global audience with clear, time-zone-specific details.",
+  "imageSrc": "3.jpg",
+  "description": "This project is a corporate flyer designed to promote a live virtual 'Business Presentation' for the CBN brand. The design maintains a consistent, professional brand identity with a sleek, tech-inspired aesthetic, utilizing a sophisticated dark blue and gold color palette. The primary focus of the layout is to clearly communicate event details to a diverse global audience. A well-organized, multi-column format featuring country flags and localized start times allows international participants to easily find their relevant information. The clear call-to-action at the bottom provides straightforward instructions for joining the virtual event, ensuring a seamless user experience.",
+  "challenge": "The key challenge was to organize and present complex logistical information for a global audience in a simple and intuitive way. Displaying event times for ten different countries across multiple time zones without creating a cluttered or confusing layout was paramount. Additionally, the design needed to be visually dynamic to capture interest for a corporate presentation, balancing a professional tone with an exciting, modern aesthetic.",
+  "solution": "The solution was a structured, multi-column grid. Each country was given its own distinct entry, visually anchored by its national flag. This modular approach breaks down the complex information into easy-to-scan blocks, allowing attendees to quickly find the details relevant to them. To make the flyer engaging, a dynamic background with abstract light effects and a bold title treatment was used. The gold accents create a premium feel, making the event seem important and valuable.",
+  "results": [
+    "A highly effective promotional tool that successfully drove attendance from multiple countries.",
+    "Clear communication that minimized confusion about event timing for international participants.",
+    "Reinforced CBN's brand image as a modern, professional, and global organization.",
+    "Positive feedback on the clear, helpful, and visually appealing design of the event materials."
+  ],
+  "images": [],
+  "tags": [
+    "Graphic Design",
+    "Flyer Design",
+    "Corporate Branding",
+    "Event Promotion",
+    "Virtual Event",
+    "Information Design",
+    "B2B Marketing"
+  ],
+  "technologies": [
+    "Adobe Illustrator",
+    "Adobe Photoshop"
+  ],
+  "category": "Graphic Design",
+  "published": true
+},{
+  "title": "Vibrant Summer Yacht Party Flyer",
+  "subtitle": "A fun and energetic illustrated flyer for a 'Yatchy Summer Send Off' event, designed to capture the vibrant atmosphere of a boat party.",
+  "imageSrc": "4.jpg",
+  "description": "This graphic design project is a custom illustrated flyer for 'Last Call,' a 'Yatchy Summer Send Off' party. The design is built around a vibrant, detailed illustration that captures the peak energy of a summer boat party, featuring a diverse group of people enjoying themselves. A bright, sun-drenched color palette of blues and yellows instantly evokes a fun, summery mood. The typography is playful and bold, with a cartoon-style headline that grabs attention. Key event details are cleverly integrated into the illustrative elements, like the waves at the bottom, creating a seamless and dynamic composition that is both informative and visually exciting.",
+  "challenge": "The biggest challenge was to move beyond a simple informational announcement and create a design that captures the specific 'vibe' of a fun, high-energy summer yacht party. The flyer needed to visually communicate the experience and generate a sense of 'FOMO' (fear of missing out). It also had to be visually bold and unique to stand out in a crowded event promotion space.",
+  "solution": "The solution was to use a full-bleed, custom illustration as the primary design element instead of photos or abstract graphics. The cartoon style allows for an idealized and energetic depiction of the party, full of movement and happy characters. This narrative approach is far more effective at selling the 'vibe' than plain text. The unique illustration style and vibrant color palette make the flyer instantly eye-catching, distinguishing it from template-based designs.",
+  "results": [
+    "A highly successful promotional piece that generated significant buzz and led to a well-attended event.",
+    "The design was widely shared on social media due to its fun and visually appealing nature.",
+    "The flyer effectively set a fun, energetic tone for the event before it even started.",
+    "Positive feedback from the event organizer on the design's creativity and effectiveness in driving ticket sales."
+  ],
+  "images": [],
+  "tags": [
+    "Graphic Design",
+    "Flyer Design",
+    "Event Promotion",
+    "Illustration",
+    "Party Flyer",
+    "Summer Event",
+    "Typography"
+  ],
+  "technologies": [
+    "Adobe Illustrator",
+    "Adobe Photoshop"
+  ],
+  "category": "Graphic Design",
+  "published": true
+},{
+  "title": "Professional Cleaning Services Flyer Design",
+  "subtitle": "A clean, modern, and trustworthy flyer for an exterior cleaning and pressure washing company, designed to showcase services and generate customer leads.",
+  "imageSrc": "5.jpg",
+  "description": "This graphic design project is a professional marketing flyer for Engineering Works LTD, a pressure washing and exterior cleaning specialist. The design utilizes a clean and modern layout with dynamic curves and circular photo insets to create a visually engaging presentation. High-quality photography of the services in action is a key feature, providing potential customers with tangible proof of the company's work. The blue and green color palette reinforces themes of cleanliness and eco-friendliness, while the clear, structured typography and a checklist-style service list make the information easy to digest. The overall design aims to build trust and position the company as a reliable and high-quality service provider.",
+  "challenge": "The main challenge was to design a flyer that could quickly build trust with potential customers for a property maintenance service. The design needed to convey a high level of professionalism and reliability at a single glance. Another challenge was to visually represent the value of the cleaning services, making the benefits tangible and motivating the homeowner or business owner to make an inquiry.",
+  "solution": "Trust was established through a polished and professional design. The clean layout, high-quality photos, clear contact information, and professional logo all signal that this is a legitimate and serious business. To make the services tangible, the design prominently features a variety of 'action shots' showing different cleaning processes. By displaying images of clean roofs and sparkling windows, the flyer effectively showcases the high-quality results customers can expect.",
+  "results": [
+    "A high-quality marketing tool that successfully generated new leads from both domestic and commercial sectors.",
+    "The professional design helped the company stand out from local competitors using less polished marketing materials.",
+    "Increased customer inquiries due to the clear presentation of services and trustworthy design.",
+    "The flyer effectively functioned as a leave-behind piece that reinforced the brand's quality and professionalism."
+  ],
+  "images": [],
+  "tags": [
+    "Graphic Design",
+    "Flyer Design",
+    "Marketing Collateral",
+    "Service Business",
+    "Print Design",
+    "Corporate Identity",
+    "B2C Marketing"
+  ],
+  "technologies": [
+    "Adobe InDesign",
+    "Adobe Photoshop",
+    "Adobe Illustrator"
+  ],
+  "category": "Graphic Design",
+  "published": true
+},{
+  "title": "B2B Environmental Services Flyer",
+  "subtitle": "A modern and professional flyer for AZR, a used cooking oil recycling company, designed to attract commercial kitchen and restaurant clients.",
+  "imageSrc": "6.jpg",
+  "description": "This graphic design is a professional B2B flyer for AZR, a company specializing in used cooking oil recycling and grease cleaning services. The design is clean, modern, and highly structured to appeal to a commercial audience, such as restaurants and food service businesses. A powerful, relevant photograph of a commercial deep fryer immediately captures the target client's attention. The flyer's content is logically organized, first outlining the key 'Benefits of Recycling' using clean icons, then detailing the 'Services Offered.' A sophisticated color palette of yellow, charcoal, and white creates a professional and trustworthy brand image, positioning AZR as a reliable environmental partner.",
+  "challenge": "The key challenge was to take a utilitarian B2B service—used cooking oil recycling—and present it through a visually appealing and highly professional design. The flyer needed to elevate the brand, making it look modern and reliable to business owners. It also had to clearly and quickly communicate the dual value proposition: the practical service of waste removal and the ethical benefit of environmental sustainability.",
+  "solution": "A sophisticated and clean corporate design language was used. The strong grid, geometric shapes (hexagons), high-quality photography, and restrained color palette all contribute to a very professional and trustworthy aesthetic. The flyer's structure is clearly divided into sections. The 'Benefits of Recycling' are highlighted first, using icons for quick comprehension, appealing to the client's sense of corporate responsibility. This is immediately followed by the practical 'Services Offered,' making the value proposition clear and persuasive.",
+  "results": [
+    "A professional marketing piece that effectively generated leads and secured contracts with restaurants and commercial kitchens.",
+    "Successfully positioned AZR as a modern and reliable leader in the environmental services sector.",
+    "The clear presentation of benefits helped clients understand the value beyond simple waste collection.",
+    "The flyer served as a strong leave-behind tool for sales representatives, reinforcing the brand's professionalism."
+  ],
+  "images": [],
+  "tags": [
+    "Graphic Design",
+    "Flyer Design",
+    "B2B Marketing",
+    "Corporate Branding",
+    "Environmental Services",
+    "Print Design",
+    "Lead Generation"
+  ],
+  "technologies": [
+    "Adobe InDesign",
+    "Adobe Photoshop",
+    "Adobe Illustrator"
+  ],
+  "category": "Graphic Design",
+  "published": true
+},{
+  "title": "Elegant Brochure Design for a Premium Skin Care Clinic",
+  "subtitle": "A sophisticated and informative brochure for Pragna Skin & Wellness, designed to build trust, showcase a wide range of aesthetic services, and promote a special offer.",
+  "imageSrc": "7.jpg",
+  "description": "This project is an elegant, two-sided brochure for Pragna, a premier skin and wellness clinic with '25 Years of Excellence.' The design uses a sophisticated and warm color palette of dusty rose and beige to create a luxurious and calming atmosphere. The front of the brochure serves as a powerful brand statement, featuring an aspirational photograph, the clinic's story, and a compelling introductory offer. The reverse side functions as a comprehensive service menu, neatly organizing a wide array of advanced aesthetic treatments into a clean, multi-column layout. The use of an elegant serif font for headings and ample white space reinforces the clinic's positioning as a high-end, expert-led establishment.",
+  "challenge": "The key challenge was to design a brochure that balances a luxurious, spa-like aesthetic with the serious, clinical nature of the advanced treatments offered. The design needed to build immense trust and convey a deep level of medical expertise, reassuring clients about the safety and quality of the procedures. A further challenge was to present an extensive menu of over 15 distinct services in an organized and elegant format that wouldn't overwhelm the reader.",
+  "solution": "Trust is built through a clean, sophisticated, and polished design. The '25 Years of Excellence' tagline is prominently featured, and the 'About Our Clinic' section tells a story of expertise and leadership. To manage the extensive information, one entire side of the brochure was dedicated to the service list, broken down into a three-column grid. Each service has a clear heading and a concise description, allowing potential clients to easily browse the offerings without being faced with dense paragraphs of text.",
+  "results": [
+    "A premium marketing piece that successfully attracted the clinic's target audience of discerning clients.",
+    "The clear presentation of services and the professional design helped to justify the clinic's high-end positioning and pricing.",
+    "Increased inquiries and bookings, particularly for the introductory offer highlighted on the front.",
+    "The brochure served as an effective in-clinic tool to inform clients about the full range of available treatments."
+  ],
+  "images": [],
+  "tags": [
+    "Graphic Design",
+    "Brochure Design",
+    "Luxury Branding",
+    "Health & Wellness",
+    "Skincare Clinic",
+    "Print Design",
+    "Marketing Collateral"
+  ],
+  "technologies": [
+    "Adobe InDesign",
+    "Adobe Photoshop",
+    "Adobe Illustrator"
+  ],
+  "category": "Graphic Design",
+  "published": true
+},{
+  "title": "Modern Mobile Mechanic Service Flyer",
+  "subtitle": "A dynamic and professional flyer for a mobile auto repair service, designed to build trust and clearly communicate key services and value propositions.",
+  "imageSrc": "8.jpg",
+  "description": "This project is a modern and dynamic flyer for 'Same Day Auto,' a mobile mechanic specializing in truck and trailer repair. The design uses a bold, high-contrast aesthetic with a striking green-to-cyan gradient and strong diagonal lines to create an energetic and professional look. A high-quality photograph of a mechanic at work establishes immediate credibility and a human connection. Key value propositions, such as 'All repairs done same day' and 'Great Rates,' are highlighted in eye-catching circular callouts to ensure they are the first thing a potential customer sees. The clear, organized list of services and contact information makes the flyer a highly effective tool for lead generation.",
+  "challenge": "The primary challenge was to create a design that could instantly build trust and communicate reliability for a mobile repair service. The flyer needed to make a potential customer, who might be in a stressful breakdown situation, feel confident in the company's professionalism and expertise. It also needed to convey the most crucial selling points and contact information in a highly scannable and memorable format.",
+  "solution": "Trust is conveyed through a polished, professional design that avoids a cluttered or amateur look. The high-quality photo of a competent-looking mechanic, the clean layout, and the clear statement 'we are licensed and bonded' all work together to build credibility. To ensure quick communication, the design uses bold, circular callouts. These bubbles isolate the most important benefits—'same day' repairs, 'great rates'—allowing a person's eye to jump directly to the key reasons they should choose this service.",
+  "results": [
+    "An effective marketing flyer that successfully generated service calls and new clients.",
+    "The modern and professional design helped the business stand out from more traditional competitors.",
+    "Customers felt more confident calling for service due to the trustworthy and professional branding.",
+    "The clear layout reduced confusion and made it easy for customers to understand the services and value offered."
+  ],
+  "images": [],
+  "tags": [
+    "Graphic Design",
+    "Flyer Design",
+    "Marketing Collateral",
+    "Automotive Repair",
+    "Service Business",
+    "Print Design",
+    "B2B Marketing"
+  ],
+  "technologies": [
+    "Adobe Photoshop",
+    "Adobe Illustrator"
+  ],
+  "category": "Graphic Design",
+  "published": true
+},{
+  "title": "High-Tech B2B Flyer for Electronics Talent Platform",
+  "subtitle": "A sleek and futuristic double-sided flyer for 'dignified me,' a platform for freelance electronics professionals, designed to attract tech companies.",
+  "imageSrc": "9.jpg",
+  "description": "This project is a sophisticated, double-sided flyer for 'dignified me,' a cutting-edge platform connecting businesses with elite freelance electronics talent. The design employs a futuristic and professional aesthetic, using a deep blue and purple color palette and high-concept imagery—a glowing CPU and a digital brain—to represent both hardware execution and intelligent design. Each side of the flyer targets a key value proposition, from project completion to advanced product design. The benefits of the platform are presented in a clear, scannable checklist format, making it easy for busy tech professionals to grasp the service's advantages. The overall design firmly establishes 'dignified me' as a modern and authoritative leader in the tech talent space.",
+  "challenge": "The primary challenge was to communicate a complex and highly specialized B2B tech service on a printed flyer in a way that was both simple and persuasive. The design needed to distill numerous features and benefits into a clear, concise message. Furthermore, it was critical to create a visual identity that felt futuristic, innovative, and deeply credible to a discerning audience of tech industry professionals.",
+  "solution": "The solution was to use a checklist format. By breaking down the value propositions into bulleted points with checkmarks, the flyer presents the information in a highly digestible and scannable way. A sleek, dark, and futuristic design language was adopted, using abstract tech imagery and a glowing blue color palette that is synonymous with cutting-edge technology. This confident, professional presentation helps to build immediate credibility with the target audience.",
+  "results": [
+    "A highly effective marketing tool for use at tech conferences, trade shows, and in direct mail campaigns.",
+    "The professional and innovative design successfully attracted high-quality leads from target tech companies.",
+    "The clear presentation of benefits helped sales representatives to quickly explain the platform's value.",
+    "The flyer reinforced the brand's position as a premium, modern solution in the freelance tech market."
+  ],
+  "images": [],
+  "tags": [
+    "Graphic Design",
+    "Flyer Design",
+    "B2B Marketing",
+    "Tech Branding",
+    "Corporate Identity",
+    "Lead Generation",
+    "Futuristic Design"
+  ],
+  "technologies": [
+    "Adobe Photoshop",
+    "Adobe InDesign",
+    "Adobe Illustrator"
+  ],
+  "category": "Graphic Design",
+  "published": true
+},{
+  "title": "Dynamic Event Services Flyer for 360 Photo Booth",
+  "subtitle": "A vibrant and energetic flyer for West Yorkshire 360 Photo Booth, designed to capture the fun of the experience and drive bookings for a variety of events.",
+  "imageSrc": "10.jpg",
+  "description": "This project is a high-energy promotional flyer for 'West Yorkshire 360 Photo Booth.' The design uses a dynamic and bold layout with sharp angles and a vibrant color gradient of purple, pink, and orange to create a celebratory, party-like atmosphere. The main visual is a compelling photograph showcasing the fun and excitement of the 360 photo booth experience, immediately connecting with potential clients. A strong, urgent call to action, 'BOOK TODAY!!!!!', is placed in a prominent ribbon to drive immediate inquiries. The flyer effectively lists the types of events catered for and includes a gallery of smaller images to demonstrate the service's versatility, positioning the brand as the go-to for an 'unforgettable event.'",
+  "challenge": "The main challenge was to visually sell an experience—the fun and excitement of a 360 photo booth—rather than just a service. The design needed to capture the dynamic energy of an event and make the viewer feel like they are missing out. Another challenge was to create a strong sense of urgency to convert passive interest into active booking inquiries.",
+  "solution": "The solution was to lead with a large, vibrant photograph of people actively having a great time using the photo booth. This visual storytelling is far more powerful than just showing the equipment. The entire design, with its party-like colors and dynamic layout, reinforces this feeling of fun. Urgency is created through the prominent 'BOOK TODAY!!!!!' call to action, which is rendered in a bold font and placed in a brightly colored ribbon that breaks the layout's grid, pushing the viewer to act.",
+  "results": [
+    "A significant increase in booking inquiries for weddings, parties, and corporate events.",
+    "The flyer successfully established a brand identity that is fun, modern, and professional.",
+    "The design proved to be an effective tool at wedding fairs, corporate expos, and for local advertising.",
+    "Positive client feedback on the exciting and professional representation of their service."
+  ],
+  "images": [],
+  "tags": [
+    "Graphic Design",
+    "Flyer Design",
+    "Event Marketing",
+    "Photo Booth",
+    "Promotional Material",
+    "Print Design",
+    "Party Flyer"
+  ],
+  "technologies": [
+    "Adobe Photoshop",
+    "Adobe Illustrator"
+  ],
+  "category": "Graphic Design",
+  "published": true
+},{
+  "title": "Professional & Trustworthy Medical Clinic Website",
+  "subtitle": "A clean, patient-centric web design for a multi-specialty medical clinic, focused on building trust, providing clear information, and simplifying appointment scheduling.",
+  "imageSrc": "medical 1.jpg",
+  "description": "This project is a comprehensive website design for a modern, multi-specialty medical clinic. The design prioritizes a clean, patient-centric experience, utilizing a calming color palette of blues and teals and a well-structured layout to build trust and confidence. The homepage is strategically organized to guide users, featuring sections that introduce the expert physicians, showcase the state-of-the-art facilities through a gallery, and highlight key services. Strong calls-to-action, such as 'Request an Appointment,' are placed at key points to streamline the process of seeking care, making the website a welcoming and highly functional digital front door for the clinic.",
+  "challenge": "The foremost challenge was to create a website that instantly conveys a profound sense of trust, expertise, and compassion. For a healthcare provider, the digital presence must be a source of confidence and reassurance for potential patients. A secondary, but equally important, challenge was to structure a large amount of critical information—including physician profiles and service details—into an intuitive architecture that is easy for anyone to navigate, especially those who may be feeling anxious or unwell.",
+  "solution": "Trust was established through a combination of elements. The professional, clean design, high-quality photography of smiling doctors and pristine facilities, a dedicated 'Meet Our Team' section, and a gallery of the clinic are all used to humanize the practice and showcase its professionalism. The display of impressive statistics (years of experience, number of experts) further solidifies their credibility. The homepage uses a clear, modular design where each section addresses a specific patient question, with key actions like 'Request an Appointment' placed in multiple strategic locations for easy access.",
+  "results": [
+    "A professional online presence that significantly enhanced the clinic's brand reputation and patient trust.",
+    "An increase in online appointment requests due to the user-friendly design and clear calls-to-action.",
+    "Reduced administrative workload as patients could easily find answers to common questions on the website.",
+    "Positive feedback from patients on the website's ease of use and reassuring, professional feel."
+  ],
+  "images": [],
+  "tags": [
+    "Web Design",
+    "Web Development",
+    "Healthcare Website",
+    "Medical Clinic",
+    "UI/UX",
+    "Patient Experience",
+    "WordPress"
+  ],
+  "technologies": [
+    "HTML5",
+    "CSS3",
+    "JavaScript",
+    "WordPress",
+    "PHP"
+  ],
+  "category": "Web Design & Development",
+  "published": true
+},{
+  "title": "Conceptual Brand Identity Redesign for Nikon",
+  "subtitle": "A strategic and modern reimagining of the iconic Nikon brand, focusing on simplification, flexibility, and appeal to a new generation of creators.",
+  "imageSrc": "31.jpg",
+  "description": "This project is a comprehensive conceptual redesign of the brand identity for the iconic camera manufacturer, Nikon. The project, titled '#Nikon Reimagined,' addresses the need to modernize the existing logo, which has been in use since 2003. The new identity is built on the principles of simplification and flexibility. It introduces a clean, lowercase logotype and a versatile new logomark—a yellow 'focus bracket' symbol—that is instantly recognizable to any photographer. While modernizing, the redesign honors Nikon's legacy by retaining the signature yellow. The new system is showcased across a wide array of applications, from product packaging and apparel to billboards and digital app icons, demonstrating its effectiveness in every context.",
+  "challenge": "The primary challenge of redesigning an iconic brand like Nikon is to strike the perfect balance between modernization and heritage. The new identity needed to feel fresh and appeal to a younger generation of creators, without discarding the decades of brand equity and trust built with professional photographers. Another major challenge was to create a highly flexible and scalable branding system that would excel in modern digital applications, an area where the previous, more complex logo struggled.",
+  "solution": "The solution was to distill the brand to its core elements. By dropping the busy background of the old logo but retaining the iconic Nikon yellow, the design maintains a strong connection to the brand's history. The new 'focus bracket' logomark is a modern concept, but it's rooted in the timeless, fundamental language of photography, making it feel both new and authentic to Nikon. The creation of this simple, separate logomark is the key to flexibility, allowing it to work perfectly as a favicon, an app icon, or a subtle branding element on products.",
+  "results": [
+    "A revitalized brand concept that successfully bridges the gap between Nikon's professional heritage and a new generation of creators.",
+    "A highly versatile and consistent branding system demonstrated to work across all digital and physical touchpoints.",
+    "A powerful case study in modernizing a legacy technology brand while respecting its core identity.",
+    "The project clearly articulates its rationale, from identifying problems with the old design to presenting a comprehensive solution."
+  ],
+  "images": [
+    "31.jpg",
+    "45.png",
+    "46.jpg",
+    "47.png",
+    "48.jpg",
+    "49.png",
+    "50.png"
+  ],
+  "tags": [
+    "Branding",
+    "Logo Redesign",
+    "Corporate Identity",
+    "Graphic Design",
+    "Case Study",
+    "Conceptual Design",
+    "Visual Identity",
+    "Photography Brand"
+  ],
+  "technologies": [
+    "Adobe Illustrator",
+    "Adobe Photoshop",
+    "Figma"
+  ],
+  "category": "Branding",
+  "published": true
+}
 ];
 
 // Connect to MongoDB
@@ -356,8 +821,35 @@ mongoose.connect(process.env.MONGODB_URI || "mongodb+srv://aenfinitee:aenfinitee
     // await Project.deleteMany({});
     // console.log('🗑️  Cleared existing projects');
 
+    // Process projects data to fix categories and image URLs
+    const processedProjects = projectsData.map(project => {
+      const categorySlug = getCategorySlug(project.category);
+      
+      // Process imageSrc
+      const mainImageUrl = project.imageSrc ? formatImageUrl(project.imageSrc, categorySlug) : '';
+      
+      // Process images array  
+      let imagesUrls = [];
+      if (project.images && Array.isArray(project.images)) {
+        imagesUrls = project.images
+          .filter(img => img && img.trim() !== '')
+          .map(img => formatImageUrl(img, categorySlug));
+      }
+      
+      if (imagesUrls.length === 0 && mainImageUrl) {
+        imagesUrls = [mainImageUrl];
+      }
+      
+      return {
+        ...project,
+        category: categorySlug,
+        imageSrc: mainImageUrl,
+        images: imagesUrls
+      };
+    });
+
     // Insert new projects
-    const insertedProjects = await Project.insertMany(projectsData);
+    const insertedProjects = await Project.insertMany(processedProjects);
     
     console.log(`🎉 Successfully seeded ${insertedProjects.length} projects!`);
     
