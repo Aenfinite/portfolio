@@ -43,21 +43,43 @@ const preloadImages = async (items) => {
       new Promise((resolve) => {
         const img = new Image()
         img.src = item.img
-        img.onload = () => {
-          // Calculate height based on aspect ratio for consistent width
-          const aspectRatio = img.naturalHeight / img.naturalWidth
-          const standardWidth = 400 // Base width for calculations
-          const calculatedHeight = Math.round(standardWidth * aspectRatio)
+        
+        let attempts = 0
+        const maxAttempts = 3
+        
+        const tryLoad = () => {
+          attempts++
+          
+          img.onload = () => {
+            // Calculate height based on aspect ratio for consistent width
+            const aspectRatio = img.naturalHeight / img.naturalWidth
+            const standardWidth = 400 // Base width for calculations
+            const calculatedHeight = Math.round(standardWidth * aspectRatio)
 
-          // Update item with calculated height
-          item.calculatedHeight = calculatedHeight
-          resolve(item)
+            // Update item with calculated height and mark as loaded
+            item.calculatedHeight = calculatedHeight
+            item.imageLoaded = true
+            resolve(item)
+          }
+          
+          img.onerror = () => {
+            if (attempts < maxAttempts) {
+              // Retry loading after delay
+              setTimeout(() => {
+                img.src = item.img + '?retry=' + attempts
+                tryLoad()
+              }, 1000 * attempts)
+            } else {
+              // Fallback height if image fails to load after retries
+              console.warn(`Failed to load image after ${maxAttempts} attempts:`, item.img)
+              item.calculatedHeight = item.height || 300
+              item.imageLoaded = false
+              resolve(item)
+            }
+          }
         }
-        img.onerror = () => {
-          // Fallback height if image fails to load
-          item.calculatedHeight = item.height || 300
-          resolve(item)
-        }
+        
+        tryLoad()
       }),
   )
 
@@ -354,7 +376,24 @@ const Masonry = ({
             onMouseEnter={(e) => handleMouseEnter(e, item)}
             onMouseLeave={(e) => handleMouseLeave(e, item)}
           >
-            <div className="item-img" style={{ backgroundImage: `url(${item.img})` }}>
+            <div className="item-img" style={{ position: 'relative', overflow: 'hidden' }}>
+              {/* Actual Image with error handling */}
+              <img
+                src={item.img}
+                alt={item.title || 'Portfolio item'}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover',
+                  display: 'block',
+                }}
+                onError={(e) => {
+                  // Fallback to background color if image fails
+                  e.target.style.display = 'none'
+                  e.target.parentElement.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)'
+                }}
+                loading="eager"
+              />
               {/* Blue Overlay - Only on Hover */}
               <div
                 className="blue-overlay"

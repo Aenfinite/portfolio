@@ -44,7 +44,14 @@ const ContactSection = () => {
                   <div className="w-10 h-10 sm:w-12 sm:h-12 bg-white border-2 border-gray-300 rounded-full flex items-center justify-center flex-shrink-0">
                     <VideoIcon className="w-4 h-4 sm:w-6 sm:h-6 text-gray-700" />
                   </div>
-                  <span className="text-sm sm:text-base md:text-lg font-medium" href="https://calendly.com/aenfinite/business-meeting">Book A Free Strategy Call</span>
+                  <a 
+                    href="https://calendly.com/aenfinite/business-meeting" 
+                    target="_blank" 
+                    rel="noopener noreferrer"
+                    className="text-sm sm:text-base md:text-lg font-medium hover:text-blue-600 transition-colors duration-200"
+                  >
+                    Book A Free Strategy Call
+                  </a>
                 </div>
               </div>
 
@@ -68,45 +75,45 @@ const ContactSection = () => {
                   delay={4000}
                   pauseOnHover={true}
                   width={400}
-                  height={320}
+                  height={380}
                 >
                   <Card>
-                    <div className="bg-black text-white p-6 sm:p-7 md:p-8 lg:p-10 rounded-xl md:rounded-2xl shadow-lg drop-shadow-lg h-full flex flex-col justify-center items-center text-center">
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 lg:w-20 lg:h-20 bg-white/20 rounded-full flex items-center justify-center mb-4 sm:mb-5 md:mb-6">
-                        <Mail className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-10 lg:h-10" />
+                    <div className="bg-black text-white p-6 sm:p-7 md:p-8 rounded-xl md:rounded-2xl shadow-lg drop-shadow-lg h-full flex flex-col justify-center items-center text-center">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-white/20 rounded-full flex items-center justify-center mb-3 sm:mb-4 flex-shrink-0">
+                        <Mail className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
                       </div>
-                      <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 md:mb-5 font-champ">Get In Touch</h3>
-                      <p className="text-base sm:text-lg md:text-xl lg:text-2xl opacity-90 leading-relaxed">
+                      <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3 md:mb-4 font-champ leading-tight">Get In Touch</h3>
+                      <p className="text-sm sm:text-base md:text-lg opacity-90 leading-relaxed">
                         Ready to discuss your next project? Let's create something amazing together.
                       </p>
                     </div>
                   </Card>
 
                   <Card>
-                    <div className="bg-white text-gray-900 p-6 sm:p-7 md:p-8 lg:p-10 rounded-xl md:rounded-2xl shadow-lg drop-shadow-lg h-full flex flex-col justify-center items-center text-center">
-                      <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 lg:w-20 lg:h-20 bg-gray-100 rounded-full flex items-center justify-center mb-4 sm:mb-5 md:mb-6">
-                        <Phone className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-10 lg:h-10 text-gray-700" />
+                    <div className="bg-white text-gray-900 p-6 sm:p-7 md:p-8 rounded-xl md:rounded-2xl shadow-lg drop-shadow-lg h-full flex flex-col justify-center items-center text-center">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-gray-100 rounded-full flex items-center justify-center mb-3 sm:mb-4 flex-shrink-0">
+                        <Phone className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7 text-gray-700" />
                       </div>
-                      <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 md:mb-5 font-champ">Call Us Today</h3>
-                      <p className="text-base sm:text-lg md:text-xl lg:text-2xl text-gray-600 leading-relaxed">
+                      <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3 md:mb-4 font-champ leading-tight">Call Us Today</h3>
+                      <p className="text-sm sm:text-base md:text-lg text-gray-600 leading-relaxed">
                         Speak directly with our team and discover how we can help transform your business.
                       </p>
                     </div>
                   </Card>
 
                   <Card>
-  <div className="bg-blue-600 text-white p-6 sm:p-7 md:p-8 lg:p-10 rounded-xl md:rounded-2xl shadow-lg drop-shadow-lg h-full flex flex-col justify-center items-center text-center">
-    <div className="w-14 h-14 sm:w-16 sm:h-16 md:w-18 md:h-18 lg:w-20 lg:h-20 bg-white/20 rounded-full flex items-center justify-center mb-4 sm:mb-5 md:mb-6">
-      <VideoIcon className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8 lg:w-10 lg:h-10" />
-    </div>
-    <h3 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold mb-3 sm:mb-4 md:mb-5 font-champ">
-      Book a Consultation Online
-    </h3>
-    <p className="text-base sm:text-lg md:text-xl lg:text-2xl opacity-90 leading-relaxed">
-      Schedule a free strategy call with our experts from anywhere in the world — let's bring your ideas to life.
-    </p>
-  </div>
-</Card>
+                    <div className="bg-blue-600 text-white p-6 sm:p-7 md:p-8 rounded-xl md:rounded-2xl shadow-lg drop-shadow-lg h-full flex flex-col justify-center items-center text-center relative overflow-hidden">
+                      <div className="w-12 h-12 sm:w-14 sm:h-14 md:w-16 md:h-16 bg-white/20 rounded-full flex items-center justify-center mb-3 sm:mb-4 flex-shrink-0">
+                        <VideoIcon className="w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7" />
+                      </div>
+                      <h3 className="text-lg sm:text-xl md:text-2xl lg:text-3xl font-bold mb-2 sm:mb-3 md:mb-4 font-champ leading-tight">
+                        Book a Consultation Online
+                      </h3>
+                      <p className="text-sm sm:text-base md:text-lg opacity-90 leading-relaxed">
+                        Schedule a free strategy call with our experts from anywhere in the world — let's bring your ideas to life.
+                      </p>
+                    </div>
+                  </Card>
 
                 </CardSwap>
               </div>

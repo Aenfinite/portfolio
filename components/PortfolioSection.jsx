@@ -1,77 +1,81 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
-import Masonry from "../Masonry/Masonry"
 
 const portfolioCategories = [
   {
-    id: "web-design-development",
-    img: "/img/web-design-&-development.png",
-    url: "/category/web-design-development",
-    height: 400,
-    title: "Web Design & Development",
-    description: "Custom websites and web applications built with modern technologies",
-    projectCount: 45,
-  },
-  {
-    id: "mobile-app",
-    img: "/img/mobile-app.png",
-    url: "/category/mobile-app",
-    height: 350,
-    title: "Mobile App",
-    description: "iOS and Android applications with seamless user experiences",
-    projectCount: 32,
-  },
-  {
-    id: "graphic-design",
-    img: "/img/graphic-design.png",
-    url: "/category/graphic-design",
-    height: 280,
-    title: "Graphic Design",
-    description: "Visual designs that communicate your brand message effectively",
-    projectCount: 58,
+    id: "branding",
+    img: "https://blog.tubikstudio.com/wp-content/uploads/2018/09/logo-design-gotikket-service-tubik.png",
+    url: "/category/branding",
+    title: "Branding",
+    description: "Complete brand identity systems that tell your story",
+    projectCount: 22,
   },
   {
     id: "logo-design",
     img: "/img/logo.png",
     url: "/category/logo-design",
-    height: 340,
     title: "Logo Design",
     description: "Memorable logos that define your brand identity",
-    projectCount: 67,
+    projectCount: 14,
   },
   {
-    id: "branding",
-    img: "/img/logo.png",
-    url: "/category/branding",
-    height: 300,
-    title: "Branding",
-    description: "Complete brand identity systems that tell your story",
-    projectCount: 41,
+    id: "graphic-design",
+    img: "/img/graphic-design.png",
+    url: "/category/graphic-design",
+    title: "Graphic Design",
+    description: "Visual designs that communicate your brand message effectively",
+    projectCount: 13,
+  },
+  {
+    id: "web-design-development",
+    img: "/img/web-design-&-development.png",
+    url: "/category/web-design-development",
+    title: "Web Design & Development",
+    description: "Custom websites and web applications built with modern technologies",
+    projectCount: 12,
   },
   {
     id: "packaging-design",
     img: "/img/packaging.png",
     url: "/category/packaging-design",
-    height: 360,
     title: "Packaging Design",
     description: "Product packaging that stands out on the shelf",
-    projectCount: 29,
+    projectCount: 11,
   },
   {
     id: "ui-ux",
     img: "/img/ux.png",
     url: "/category/ui-ux",
-    height: 310,
     title: "UI/UX",
     description: "User-centered design for digital products and services",
-    projectCount: 53,
+    projectCount: 5,
+  },
+  {
+    id: "mobile-app",
+    img: "/img/mobile-app.png",
+    url: "/category/mobile-app",
+    title: "Mobile App",
+    description: "iOS and Android applications with seamless user experiences",
+    projectCount: 4,
   },
 ]
 
 const PortfolioSection = () => {
   const [selectedCategory, setSelectedCategory] = useState(null)
+  const [imagesLoaded, setImagesLoaded] = useState({})
+  const [hoveredCard, setHoveredCard] = useState(null)
+
+  // Track individual image loads
+  const handleImageLoad = (categoryId) => {
+    setImagesLoaded(prev => ({ ...prev, [categoryId]: true }))
+  }
+
+  const handleImageError = (categoryId) => {
+    console.error(`Failed to load image for category: ${categoryId}`)
+    setImagesLoaded(prev => ({ ...prev, [categoryId]: false }))
+  }
 
   const openCategoryModal = (category) => {
     setSelectedCategory(category)
@@ -95,27 +99,77 @@ const PortfolioSection = () => {
           </p>
         </div>
 
-        {/* Masonry Component - Full Width */}
-        <div className="w-full">
-          <div
-            className="w-full"
-            style={{
-              position: "relative",
-              paddingBottom: "40px",
-            }}
-          >
-            <Masonry
-              items={portfolioCategories}
-              ease="power3.out"
-              duration={0.6}
-              stagger={0.05}
-              animateFrom="bottom"
-              scaleOnHover={true}
-              hoverScale={0.95}
-              blurToFocus={true}
-              colorShiftOnHover={false}
-              onItemClick={openCategoryModal}
-            />
+        {/* Custom Grid - Landscape Cards */}
+        <div className="w-full max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
+            {portfolioCategories.map((category, index) => {
+              const isLoaded = imagesLoaded[category.id]
+              const isHovered = hoveredCard === category.id
+
+              return (
+                <div
+                  key={category.id}
+                  className="portfolio-card group cursor-pointer overflow-hidden rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-300"
+                  style={{
+                    opacity: isLoaded === false ? 0.3 : 1,
+                    animation: `fadeInUp 0.6s ease-out ${index * 0.1}s both`,
+                    transform: isHovered ? 'scale(0.98)' : 'scale(1)',
+                  }}
+                  onClick={() => openCategoryModal(category)}
+                  onMouseEnter={() => setHoveredCard(category.id)}
+                  onMouseLeave={() => setHoveredCard(null)}
+                >
+                  {/* Image Container - Landscape 16:9 Aspect Ratio */}
+                  <div className="relative w-full overflow-hidden" style={{ paddingBottom: '56.25%' }}>
+                    <img
+                      src={category.img}
+                      alt={category.title}
+                      className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                      onLoad={() => handleImageLoad(category.id)}
+                      onError={() => handleImageError(category.id)}
+                      loading="eager"
+                    />
+                    
+                    {/* Gradient Overlay */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent opacity-60 group-hover:opacity-80 transition-opacity duration-300"></div>
+                    
+                    {/* Blue Hover Overlay - No Icon */}
+                    <div 
+                      className="absolute inset-0 bg-blue-600/90 transition-all duration-300 flex items-center justify-center"
+                      style={{
+                        opacity: isHovered ? 1 : 0,
+                      }}
+                    >
+                      <span 
+                        className="text-3xl md:text-4xl font-bold text-white transition-all duration-300"
+                        style={{
+                          transform: isHovered ? 'translateY(0) scale(1)' : 'translateY(20px) scale(0.8)',
+                          opacity: isHovered ? 1 : 0,
+                        }}
+                      >
+                        View Projects
+                      </span>
+                    </div>
+
+                    {/* Category Info */}
+                    <div 
+                      className="absolute bottom-0 left-0 right-0 p-4 md:p-6 z-10 transition-all duration-300"
+                      style={{
+                        transform: isHovered ? 'translateY(100%)' : 'translateY(0)',
+                        opacity: isHovered ? 0 : 1,
+                      }}
+                    >
+                      <h3 className="text-xl md:text-2xl font-bold text-white mb-1 font-champ">
+                        {category.title}
+                      </h3>
+                      <p className="text-white/90 text-sm md:text-base">
+                        {category.projectCount} Projects
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
           </div>
         </div>
 
@@ -124,11 +178,16 @@ const PortfolioSection = () => {
           <div className="fixed inset-0 bg-black bg-opacity-75 flex items-center justify-center z-50 p-4">
             <div className="bg-white rounded-2xl max-w-2xl w-full overflow-hidden shadow-2xl">
               {/* Modal Header */}
-              <div className="relative h-64 overflow-hidden">
+              <div className="relative h-64 overflow-hidden bg-gradient-to-br from-blue-500 to-purple-600">
                 <img
                   src={selectedCategory.img || "/placeholder.svg"}
                   alt={selectedCategory.title}
                   className="w-full h-full object-cover"
+                  loading="eager"
+                  onError={(e) => {
+                    console.warn('Failed to load category image:', selectedCategory.img);
+                    e.target.style.display = 'none';
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent"></div>
                 <button
