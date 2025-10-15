@@ -6,11 +6,11 @@ import Link from "next/link"
 const portfolioCategories = [
   {
     id: "branding",
-    img: "https://blog.tubikstudio.com/wp-content/uploads/2018/09/logo-design-gotikket-service-tubik.png",
+    img: "/img/logo.png",
     url: "/category/branding",
     title: "Branding",
     description: "Complete brand identity systems that tell your story",
-    projectCount: 22,
+    projectCount: 30,
   },
   {
     id: "logo-design",
@@ -34,7 +34,7 @@ const portfolioCategories = [
     url: "/category/web-design-development",
     title: "Web Design & Development",
     description: "Custom websites and web applications built with modern technologies",
-    projectCount: 12,
+    projectCount: 17,
   },
   {
     id: "packaging-design",
@@ -42,7 +42,7 @@ const portfolioCategories = [
     url: "/category/packaging-design",
     title: "Packaging Design",
     description: "Product packaging that stands out on the shelf",
-    projectCount: 11,
+    projectCount: 17,
   },
   {
     id: "ui-ux",
@@ -58,7 +58,7 @@ const portfolioCategories = [
     url: "/category/mobile-app",
     title: "Mobile App",
     description: "iOS and Android applications with seamless user experiences",
-    projectCount: 4,
+    projectCount: 8,
   },
 ]
 
