@@ -6,7 +6,7 @@ import Link from "next/link"
 const portfolioCategories = [
   {
     id: "branding",
-    img: "/img/logo.png",
+    img: "https://cdn.shopify.com/s/files/1/0565/3423/7349/files/Brandguidelinestemplate_1_1dc9ba68-c048-48f4-b061-45ac0cfb4906_600x600.jpg?v=1687095692",
     url: "/category/branding",
     title: "Branding",
     description: "Complete brand identity systems that tell your story",
